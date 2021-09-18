@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Gemini&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="用hooks写了份todolist，刚好就借这份project写出一些hooks的使用方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="todolist-hooks">
+<meta property="og:url" content="http://example.com/2021/05/09/todolist-hooks/index.html">
+<meta property="og:site_name" content="Le-zone">
+<meta property="og:description" content="用hooks写了份todolist，刚好就借这份project写出一些hooks的使用方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/05/09/todolist-hooks/todolist.png">
+<meta property="og:image" content="http://example.com/2021/05/09/todolist-hooks/components.png">
+<meta property="article:published_time" content="2021-05-09T02:56:45.000Z">
+<meta property="article:modified_time" content="2021-05-12T15:09:00.877Z">
+<meta property="article:author" content="Lruler">
+<meta property="article:tag" content="react">
+<meta property="article:tag" content="project">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/05/09/todolist-hooks/todolist.png">
+
+
+<link rel="canonical" href="http://example.com/2021/05/09/todolist-hooks/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;05&#x2F;09&#x2F;todolist-hooks&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;05&#x2F;09&#x2F;todolist-hooks&#x2F;&quot;,&quot;title&quot;:&quot;todolist-hooks&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>todolist-hooks | Le-zone</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Le-zone" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Le-zone</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hooks%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">hooks基本语法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#State-Hook"><span class="nav-number">1.1.</span> <span class="nav-text">State Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Effect-Hook"><span class="nav-number">1.2.</span> <span class="nav-text">Effect Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ref-Hook"><span class="nav-number">1.3.</span> <span class="nav-text">Ref Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89Hook%E4%B8%8E%E5%85%B6%E4%BB%96Hooks-API"><span class="nav-number">1.4.</span> <span class="nav-text">自定义Hook与其他Hooks API</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Todolist"><span class="nav-number">2.</span> <span class="nav-text">Todolist</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">组件化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">组件通信方式总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">组件间的关系：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%A0%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">3.2.</span> <span class="nav-text">几种通信方式：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%A5%BD%E7%9A%84%E6%90%AD%E9%85%8D%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">3.3.</span> <span class="nav-text">比较好的搭配方式：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%8F%90%E5%8D%87"><span class="nav-number">3.4.</span> <span class="nav-text">状态提升</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Input"><span class="nav-number">3.5.</span> <span class="nav-text">Input</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AAtodo%E5%88%97%E8%A1%A8"><span class="nav-number">3.5.1.</span> <span class="nav-text">增加一个todo列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E6%89%80%E6%9C%89todo"><span class="nav-number">3.5.2.</span> <span class="nav-text">完成所有todo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">3.6.</span> <span class="nav-text">List</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item"><span class="nav-number">3.7.</span> <span class="nav-text">Item</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter"><span class="nav-number">3.8.</span> <span class="nav-text">Filter</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">4.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lruler"
+      src="https://avatars.githubusercontent.com/u/75160088?v=4">
+  <p class="site-author-name" itemprop="name">Lruler</p>
+  <div class="site-description" itemprop="description">Passionate love is a thirst</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Lruler" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Lruler" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1204312199@qq.com" title="E-Mail → mailto:1204312199@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/09/todolist-hooks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/75160088?v=4">
+      <meta itemprop="name" content="Lruler">
+      <meta itemprop="description" content="Passionate love is a thirst">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Le-zone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          todolist-hooks
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-09 10:56:45" itemprop="dateCreated datePublished" datetime="2021-05-09T10:56:45+08:00">2021-05-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-05-12 23:09:00" itemprop="dateModified" datetime="2021-05-12T23:09:00+08:00">2021-05-12</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/project/" itemprop="url" rel="index"><span itemprop="name">project</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>用hooks写了份todolist，刚好就借这份project写出一些hooks的使用方法</p>
+<span id="more"></span>
+<h1 id="hooks基本语法介绍"><a href="#hooks基本语法介绍" class="headerlink" title="hooks基本语法介绍"></a>hooks基本语法介绍</h1><h2 id="State-Hook"><a href="#State-Hook" class="headerlink" title="State Hook"></a>State Hook</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(1). State Hook让函数组件也可以有state状态, 并进行状态数据的读写操作</span><br><span class="line">(2). 语法: const [xxx, setXxx] = React.useState(initValue)  </span><br><span class="line">(3). useState()说明:</span><br><span class="line">        参数: 第一次初始化指定的值在内部作缓存</span><br><span class="line">        返回值: 包含2个元素的数组, 第1个为内部当前状态值, 第2个为更新状态值的函数</span><br><span class="line">(4). setXxx()2种写法:</span><br><span class="line">        setXxx(newValue): 参数为非函数值, 直接指定新的状态值, 内部用其覆盖原来的状态值</span><br><span class="line">        setXxx(value =&gt; newValue): 参数为函数, 接收原本的状态值, 返回新的状态值, 内部用其覆盖原来的状态值</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Effect-Hook"><a href="#Effect-Hook" class="headerlink" title="Effect Hook"></a>Effect Hook</h2><pre><code>    (1). Effect Hook 可以让你在函数组件中执行副作用操作(用于模拟类组件中的生命周期钩子)
+    (2). React中的副作用操作:
+            发ajax请求数据获取
+            设置订阅 / 启动定时器
+            手动更改真实DOM
+    (3). 语法和说明: 
+            useEffect(() =&gt; &#123; 
+            // 在此可以执行任何带副作用操作
+            return () =&gt; &#123; // 在组件卸载前执行
+                // 在此做一些收尾工作, 比如清除定时器/取消订阅等
+            &#125;
+            &#125;, [stateValue]) // 如果指定的是[], 回调函数只会在第一次render()后执行
+            第二个参数限制了调用这个hooks的范围，则就会只有在statevalue发生改变时调用这个hook
+        
+    (4). 可以把 useEffect Hook 看做如下三个函数的组合
+            componentDidMount()
+            componentDidUpdate()
+            componentWillUnmount() 
+</code></pre>
+<h2 id="Ref-Hook"><a href="#Ref-Hook" class="headerlink" title="Ref Hook"></a>Ref Hook</h2><pre><code>    (1). Ref Hook可以在函数组件中存储/查找组件内的标签或任意其它数据
+    (2). 语法: const refContainer = useRef()
+    (3). 作用:保存标签对象,功能与React.createRef()一样
+</code></pre>
+<h2 id="自定义Hook与其他Hooks-API"><a href="#自定义Hook与其他Hooks-API" class="headerlink" title="自定义Hook与其他Hooks API"></a>自定义Hook与其他Hooks API</h2><p>这部分内容比较多，详情右边搜索关于hooks的详细博客，这里就先介绍最基础的三个。</p>
+<h1 id="Todolist"><a href="#Todolist" class="headerlink" title="Todolist"></a>Todolist</h1><h2 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h2><p>了解了hooks的基本语法，我们就正式开始写这份todolist的project吧。<br>先看项目的基本UI<br><img src="/2021/05/09/todolist-hooks/todolist.png" alt="td"><br>这算是比较基本的UI了，我们就从上往下拆分组件，可以拆解为<br>                1. 头部部分的输入框:Input 这可以包括标题的Todo，因为只是基本的样式没有交互效果，可以简单的与Input放在一起，叫他header组件也没什么问题<br>                2. 容器组件：List<br>                        3. List组件中的Item组件，这份todo就是个列表嘛，那必然就可以分类列表的容器组件和负责展示的Item组件<br>                4.尾部组件：Filter 其实叫他Footer组件也行，但他有三种不同的筛选状态，就叫他Filter吧</p>
+<p>组件拆解完毕后，其中的html放在render（）/return（）里， css就作为文件放在对应的文件夹中，结构如图<br><img src="/2021/05/09/todolist-hooks/components.png" alt="cp">  </p>
+<p><strong>这里的css样式文件我就没有拆了，因为是直接拿来的文件，不太分得清从哪开始拆，也没注释，实际自己写的时候一定要拆的</strong></p>
+<h1 id="组件通信方式总结"><a href="#组件通信方式总结" class="headerlink" title="组件通信方式总结"></a>组件通信方式总结</h1><p>写完静态页面后就根据需求加交互效果呗，这里就会涉及到react组件之间如何传递数据，下面是一些总结</p>
+<h2 id="组件间的关系："><a href="#组件间的关系：" class="headerlink" title="组件间的关系："></a>组件间的关系：</h2><ul>
+<li>父子组件</li>
+<li>兄弟组件（非嵌套组件）</li>
+<li>祖孙组件（跨级组件）</li>
+</ul>
+<h2 id="几种通信方式："><a href="#几种通信方式：" class="headerlink" title="几种通信方式："></a>几种通信方式：</h2><pre><code>    1.props：
+        (1).children props
+        (2).render props
+    2.消息订阅-发布：
+        pubs-sub、event等等
+    3.集中式管理：
+        redux、dva等等
+    4.conText:
+        生产者-消费者模式
+</code></pre>
+<h2 id="比较好的搭配方式："><a href="#比较好的搭配方式：" class="headerlink" title="比较好的搭配方式："></a>比较好的搭配方式：</h2><pre><code>    父子组件：props
+    兄弟组件：消息订阅-发布、集中式管理
+    祖孙组件(跨级组件)：消息订阅-发布、集中式管理、conText(开发用的少，封装插件用的多)
+</code></pre>
+<p>因为todolist算是比较简单的，我们就拿<strong>状态提升</strong>来写。</p>
+<h2 id="状态提升"><a href="#状态提升" class="headerlink" title="状态提升"></a>状态提升</h2><p>就是把一些可以共享state的组件们的state提到他们共同的父组件中去，简单来说，这份数据你也要我也要他也要，但是我们一人写一份就很麻烦，不如把state交给一个老父亲，让他按需求发给我们就好了。<br>所以我们就在App组件中定义state,todos都知道是个列表嘛，我们就把todos看成一个对象数组，每个todo</p>
+<pre><code>            const[todos,setTodos] = useState([])
+</code></pre>
+<p>初始化好后就用props把todos传下去呗，这样每个自组件都能共享这个state了</p>
+<h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><p>接下来开始写第一个功能，按照组件顺序自然就从Input开始。</p>
+<h3 id="增加一个todo列表"><a href="#增加一个todo列表" class="headerlink" title="增加一个todo列表"></a>增加一个todo列表</h3><p>我们给这个事件函数命名为handleAdd(),组件内的函数一般都命名为handleXx<br>无非就是按下回车后给todo这个空数组添加一个元素todo对象呗<br>先给输入框绑定键盘事件</p>
+<pre><code>            &lt;input onKeyUp=&#123;handleAdd&#125;&gt; //onKeyUp就是键盘按下后弹起就会触发
+</code></pre>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleAdd</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> &#123; keyCode, target &#125; = e</span><br><span class="line">      <span class="keyword">if</span> (keyCode !== <span class="number">13</span>) <span class="keyword">return</span> <span class="comment">//判断是否为回车</span></span><br><span class="line">      <span class="keyword">const</span> todoObj = &#123; <span class="attr">id</span>: nanoid(), <span class="attr">content</span>: target.value, <span class="attr">completed</span>: <span class="literal">false</span>, <span class="attr">flag</span>: <span class="literal">true</span>, <span class="attr">editing</span>: <span class="literal">false</span> &#125; <span class="comment">//nanoid用于唯一生成唯一id，安装后引入就行，其他的属性是根据需求来添加的</span></span><br><span class="line">      props.addTodo(todoObj) <span class="comment">//因为state在App中，所以调用App中的方法来进行更新</span></span><br><span class="line">      target.value = <span class="string">&#x27;&#x27;</span>  <span class="comment">//清空输入框</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上行所示，虽然你通过props接受到了state，可想要更新state，还得回App中，因为state在哪儿，操作state的方法就在哪儿 所以就得来个回调嘛<br>addTodo的具体函数如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTodo</span>(<span class="params">todoObj</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> newTodos = [todoObj, ...todos]<span class="comment">// 注明一下为什么用扩展运算符而不用数组的push方法添加元素对象，因为push方法不是纯函数，他产生的新数组和原数组的指针指向不是同一个地址，可能回产生一些不必要的bug，所以就一般不用这些方法。</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>关于纯函数以及函数的副作用等也可以右边搜索相关的详细解析博客啦</p>
+<h3 id="完成所有todo"><a href="#完成所有todo" class="headerlink" title="完成所有todo"></a>完成所有todo</h3><p>这就是Input组件的第二个需求，也很简单，先handleCompleteAll调用App内相对应的方法，再用数组的map方法让每一个todo对象的completed属性变成true就可以了</p>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>这个组件没什么好说的，就是一个容器组件，把相应的state和方法用props传给Item就行<br>不过还是有一个需要注意的点，就是之前说过List其实可以看作是一个数组，Item是里面的元素，所以每一个Item都应该由map方法展示，代码如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span>(</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">        &#123;todos.map(<span class="function"><span class="params">todo</span> =&gt;</span> <span class="xml"><span class="tag">&lt;<span class="name">Item</span>/&gt;</span></span>)&#125;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Item"><a href="#Item" class="headerlink" title="Item"></a>Item</h2><p>这个需求就比较多啦<br>编辑 删除 完成<br>还有随着state的改变样式也跟着等等<br>不过具体思路还是和上面一样，也就不赘述啦</p>
+<h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>对于需求方法也没什么好说的，还是同上<br>不过要注意一点，实现排他思想的tab栏切换<br>思路就是，把id放在state里面，每次点击一个tab栏的时候，就会传入自己的id变成state，这样只有自己的id和state吻合的时候才会实现单个tab选项卡高亮的效果</p>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>上面就是关于这个小项目的总结啦，好说这也是自己写的第一个react项目，也花了一些时间，写一篇博客记录下来，算是加强理解吧</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/react/" rel="tag"># react</a>
+              <a href="/tags/project/" rel="tag"># project</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/05/10/fetch-%E6%90%9C%E7%B4%A2%E7%94%A8%E6%88%B7/" rel="next" title="fetch-搜索用户">
+                  fetch-搜索用户 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<span id="timeDate">载入天数...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("05/06/2021 15:13:14");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 " + dnum + " 天 "+ hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lruler</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

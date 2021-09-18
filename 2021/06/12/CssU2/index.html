@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Gemini&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Css in depth 第二章学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unit2-相对单位">
+<meta property="og:url" content="http://example.com/2021/06/12/CssU2/index.html">
+<meta property="og:site_name" content="Le-zone">
+<meta property="og:description" content="Css in depth 第二章学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-12T12:23:28.000Z">
+<meta property="article:modified_time" content="2021-06-12T12:31:00.646Z">
+<meta property="article:author" content="Lruler">
+<meta property="article:tag" content="css">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/06/12/CssU2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;06&#x2F;12&#x2F;CssU2&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;06&#x2F;12&#x2F;CssU2&#x2F;&quot;,&quot;title&quot;:&quot;Unit2-相对单位&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Unit2-相对单位 | Le-zone</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Le-zone" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Le-zone</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#em%E5%92%8Crem"><span class="nav-number">1.</span> <span class="nav-text">em和rem</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#em"><span class="nav-number">1.1.</span> <span class="nav-text">em</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rem"><span class="nav-number">1.2.</span> <span class="nav-text">rem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">反模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%93%8D%E5%BA%94%E5%BC%8F%E9%9D%A2%E6%9D%BF"><span class="nav-number">1.4.</span> <span class="nav-text">构造响应式面板</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%86%E5%8F%A3%E7%9B%B8%E5%AF%B9%E5%8D%95%E4%BD%8D"><span class="nav-number">2.</span> <span class="nav-text">视口相对单位</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">2.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#calc-%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">calc()函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E5%8D%95%E4%BD%8D%E7%9A%84%E5%80%BC"><span class="nav-number">3.1.</span> <span class="nav-text">无单位的值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7-%E5%8D%B3CSS%E5%8F%98%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">自定义属性(即CSS变量)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lruler"
+      src="https://avatars.githubusercontent.com/u/75160088?v=4">
+  <p class="site-author-name" itemprop="name">Lruler</p>
+  <div class="site-description" itemprop="description">Passionate love is a thirst</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Lruler" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Lruler" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1204312199@qq.com" title="E-Mail → mailto:1204312199@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/12/CssU2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/75160088?v=4">
+      <meta itemprop="name" content="Lruler">
+      <meta itemprop="description" content="Passionate love is a thirst">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Le-zone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unit2-相对单位
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-12 20:23:28 / 修改时间：20:31:00" itemprop="dateCreated datePublished" datetime="2021-06-12T20:23:28+08:00">2021-06-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Css in depth 第二章学习笔记</p>
+<span id="more"></span>
+
+<p>接下来开始相对单位的学习啦，因为对于小幸运这种大量适配移动端的网页项目来说，是肯定不能用px这种单位的，直接盲目的学这些相对单位，包括@medium啥的卡了好久，这章节算是帮我捋清了很多东西。</p>
+<h1 id="em和rem"><a href="#em和rem" class="headerlink" title="em和rem"></a>em和rem</h1><h2 id="em"><a href="#em" class="headerlink" title="em"></a>em</h2><p>em是最常见的相对单位，适于基于特定字号进行排版，在CSS中，1em就等于当前元素的字号。<br>浏览器中默认的字体字号是16px,也就是说再不进行层叠的情况下，1em的值就是16px。其实就是</p>
+<pre><code>    body&#123;
+        font-size: 16px;
+    &#125;
+</code></pre>
+<p>其余后代元素的font-size会继承这一字号大小(再不加上声明的情况下，这些后代元素也可以用em来定义)，但em会有问题，比如嵌套列表，要不断的用1em覆盖继承来的font-size大小才能解决这一问题，所以我们有更好的选择 rem</p>
+<h2 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h2><p>rem,字面上看就是root em,也就是说所有rem都是相对于祖元素的font-size来说的，就不用担心继承的问题了。在DOM树中，html元素是顶级(根)节点，它下面是子节点head和body，再后面就是逐层嵌套的后代节点。根节点是所有其他元素的祖先节点，它有一个伪类选择器(:root)，可以用来选中自己。:root{} === html{}。<br>rem虽然好用，但不是万能的，书里说，CSS关于所有问题的答案只有一种: 看情况。 (真的麻了)<br>所以书里也帮我们总结了一条规律呀:</p>
+<p><strong>rem设置字号，px设置边框，em设置其他大部分属性</strong></p>
+<h2 id="反模式"><a href="#反模式" class="headerlink" title="反模式"></a>反模式</h2><p>这为什么叫反模式我也不清楚，总之就是把默认字号设置成10px(0.625en)，这样就方便计算了，比如什么14px就是1.4em啊啥的，书里不推荐这种方法，因为这其实还是像素思维，脑子里想的一直是大概要多少像素然后写出em，这样其实就根本没有用em的必要，我们用相对单位就是为了在响应式开发中引入一个模糊的概念，也就是到底多少像素不重要，只要在适配屏幕的过程中字体大小等看着舒服就行。书上就说是在跟设计师先规定好根元素的字号后(通常是类似于标题或者页脚的字号)，然后在相对于的地方进行计算。<br>这里就推荐Vscode里面的一个插件！ <strong>px to rem &amp; rpx</strong> 这样编译器会自动帮我们计算哈，偷懒第一人(dog)</p>
+<h2 id="构造响应式面板"><a href="#构造响应式面板" class="headerlink" title="构造响应式面板"></a>构造响应式面板</h2><p>顾名思义，就是根据屏幕尺寸的大小来改变网页的字号大小，用媒体查询@media来实现，书上说后面的章节会详细介绍，这里就先不写那么多了。</p>
+<h1 id="视口相对单位"><a href="#视口相对单位" class="headerlink" title="视口相对单位"></a>视口相对单位</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>先明白视口的概念:就是浏览器的可视窗口，不包括什么地址栏啊工具栏啊什么的。<br>视口单位有四种:</p>
+<pre><code>    vh: 视口高度的1/100
+    vw: 视口宽度的1/100
+    vmin: 视口宽/高较小的1/100
+    vmax: 视口宽/高较大的1/100
+    vmin/vmax 用于手机竖屏和横屏变化的情况
+</code></pre>
+<h2 id="calc-函数"><a href="#calc-函数" class="headerlink" title="calc()函数"></a>calc()函数</h2><p>视口单位一般用于定义div啥的，定义字号会很麻烦，比如屏幕贼大的时候字贼大，屏幕贼小的时候字又贼小，所以为了避免这些极端情况，我们就可以用上calc()函数，该函数内可以对两个极其以上的值进行基本运算，也能结合不同单位。<br>比如：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:root</span>&#123;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="built_in">calc</span>(<span class="number">0.5em</span> + <span class="number">1vw</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就可以保证字体有0.5em的下限不会过小，又有1vw可以随着屏幕增长平滑过渡</p>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><h2 id="无单位的值"><a href="#无单位的值" class="headerlink" title="无单位的值"></a>无单位的值</h2><p>有些属性允许无单位，比如line-height,z-index,font-weight(700为bold，400为normal)，而line-height的无单位数值也是相当于字号的相对值，而加上单位可能会出现文字重叠的问题，所以最好不好给行高添加单位</p>
+<h2 id="自定义属性-即CSS变量"><a href="#自定义属性-即CSS变量" class="headerlink" title="自定义属性(即CSS变量)"></a>自定义属性(即CSS变量)</h2><p>所谓自定义属性，又叫CSS变量，我们可以声明一个自定义属性，就可以在样式表中的其他地方引用这个值。<br>我们可以这么定义和引用自定义属性</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:root</span>&#123;</span><br><span class="line">    --mian-<span class="attribute">font</span>: Arial,Helvetica;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">p</span>&#123;</span><br><span class="line">    <span class="attribute">font-family</span>: <span class="built_in">var</span>(--main-font);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>自定义属性的真正意义在于它能够层叠和继承，可以在多个选择器中定义相同的变量，这个变量在不同地方有不同的值。<br>(感觉把这个东西放在react里面用会很高级)</p>
+<p>第二章的笔记就到这了，也只是笼统的概述了一下，具体要看后续的学习和实操响应式开发吧，继续加油</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/css/" rel="tag"># css</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/06/12/CssU1/" rel="prev" title="Unit1-层叠，优先级，继承">
+                  <i class="fa fa-chevron-left"></i> Unit1-层叠，优先级，继承
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/06/12/CssU3/" rel="next" title="Unit3-盒模型">
+                  Unit3-盒模型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<span id="timeDate">载入天数...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("05/06/2021 15:13:14");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 " + dnum + " 天 "+ hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lruler</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

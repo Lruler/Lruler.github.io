@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Gemini&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Css in depth 第三章学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unit3-盒模型">
+<meta property="og:url" content="http://example.com/2021/06/12/CssU3/index.html">
+<meta property="og:site_name" content="Le-zone">
+<meta property="og:description" content="Css in depth 第三章学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/06/12/CssU3/1.png">
+<meta property="og:image" content="http://example.com/2021/06/12/CssU3/2.png">
+<meta property="article:published_time" content="2021-06-12T12:32:55.000Z">
+<meta property="article:modified_time" content="2021-06-12T12:45:57.992Z">
+<meta property="article:author" content="Lruler">
+<meta property="article:tag" content="css">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/06/12/CssU3/1.png">
+
+
+<link rel="canonical" href="http://example.com/2021/06/12/CssU3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;06&#x2F;12&#x2F;CssU3&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;06&#x2F;12&#x2F;CssU3&#x2F;&quot;,&quot;title&quot;:&quot;Unit3-盒模型&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Unit3-盒模型 | Le-zone</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Le-zone" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Le-zone</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">盒模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%83%E7%B4%A0%E9%AB%98%E5%BA%A6%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">元素高度问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E6%BA%A2%E5%87%BA%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">内容溢出的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BE%E5%88%86%E6%AF%94%E9%AB%98%E5%BA%A6%E5%A4%87%E9%80%89%E6%96%B9%E6%A1%88"><span class="nav-number">2.2.</span> <span class="nav-text">百分比高度备选方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CSS%E8%A1%A8%E6%A0%BC%E5%B8%83%E5%B1%80"><span class="nav-number">2.2.1.</span> <span class="nav-text">CSS表格布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Felxbox"><span class="nav-number">2.2.2.</span> <span class="nav-text">Felxbox</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#min-height%E5%92%8Cmax-height"><span class="nav-number">2.3.</span> <span class="nav-text">min-height和max-height</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD%E5%92%8C%E6%B0%B4%E5%B9%B3%E5%B1%85%E4%B8%AD"><span class="nav-number">3.</span> <span class="nav-text">垂直居中和水平居中</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%B1%85%E4%B8%AD"><span class="nav-number">3.1.</span> <span class="nav-text">水平居中</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E5%86%85%E5%85%83%E7%B4%A0%E6%B0%B4%E5%B9%B3%E5%B1%85%E4%B8%AD"><span class="nav-number">3.1.1.</span> <span class="nav-text">行内元素水平居中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E7%BA%A7%E5%85%83%E7%B4%A0%E6%B0%B4%E5%B9%B3%E5%B1%85%E4%B8%AD"><span class="nav-number">3.1.2.</span> <span class="nav-text">块级元素水平居中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD"><span class="nav-number">3.2.</span> <span class="nav-text">垂直居中</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC-%E8%A1%8C%E5%86%85%E5%85%83%E7%B4%A0-%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD"><span class="nav-number">3.2.1.</span> <span class="nav-text">文本(行内元素)垂直居中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E7%BA%A7%E5%85%83%E7%B4%A0%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD"><span class="nav-number">3.2.2.</span> <span class="nav-text">块级元素垂直居中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD"><span class="nav-number">3.3.</span> <span class="nav-text">水平垂直居中</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%96%E8%BE%B9%E8%B7%9D%E6%8A%98%E5%8F%A0"><span class="nav-number">4.</span> <span class="nav-text">外边距折叠</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">4.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BC%9A%E5%8F%91%E7%94%9F%E5%A4%96%E8%BE%B9%E8%B7%9D%E6%8A%98%E5%8F%A0%E5%91%A2"><span class="nav-number">4.2.</span> <span class="nav-text">什么时候会发生外边距折叠呢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%96%E8%BE%B9%E8%B7%9D%E6%8A%98%E5%8F%A0%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="nav-number">4.3.</span> <span class="nav-text">外边距折叠的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E5%A4%96%E8%BE%B9%E8%B7%9D%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">4.4.</span> <span class="nav-text">避免外边距的方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8C%AB%E5%A4%B4%E9%B9%B0%E9%80%89%E6%8B%A9%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">猫头鹰选择器 * + *</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lruler"
+      src="https://avatars.githubusercontent.com/u/75160088?v=4">
+  <p class="site-author-name" itemprop="name">Lruler</p>
+  <div class="site-description" itemprop="description">Passionate love is a thirst</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Lruler" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Lruler" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1204312199@qq.com" title="E-Mail → mailto:1204312199@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/12/CssU3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/75160088?v=4">
+      <meta itemprop="name" content="Lruler">
+      <meta itemprop="description" content="Passionate love is a thirst">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Le-zone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unit3-盒模型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-12 20:32:55 / 修改时间：20:45:57" itemprop="dateCreated datePublished" datetime="2021-06-12T20:32:55+08:00">2021-06-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Css in depth 第三章学习笔记</p>
+<span id="more"></span>
+
+<h1 id="盒模型"><a href="#盒模型" class="headerlink" title="盒模型"></a>盒模型</h1><p>先了解一下什么是盒模型:<br>就我目前所学的，所谓盒子就是一个一个小区域，用来装内容的，所有可视内容都要放在盒子里，无论是行内，块级还是行内块元素，都可以是盒子模型。<br><img src="/2021/06/12/CssU3/1.png" alt="1"></p>
+<p>这是默认的盒子模型，其中盒子的宽高并不影响padding等值，就是可以填充内容区域的高度。<br>而在我们给元素设置为box-sizing: border-box后会改变盒模型<br><img src="/2021/06/12/CssU3/2.png" alt="2"><br>这会让我们能更好的掌控盒模型，因为我们此时设置的宽高就是该盒子整体的宽高，包括padding和border等值。</p>
+<p>所以在写CSS的时候还是选择border-box吧，省事嘛。<br>可以全局设置修改盒模型所以在写CSS的时候还是选择border-box吧，省事嘛。<br>可以全局设置修改盒模型</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:root</span>&#123;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">*</span><br><span class="line"><span class="selector-pseudo">::before</span></span><br><span class="line"><span class="selector-pseudo">::after</span>&#123;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在使用盒子模型后，对于添加一丢丢内外边距的时候，我们可以不用这么写</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">div&#123;</span><br><span class="line">    width: 29%;</span><br><span class="line">    magrin-left: 1%;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>别问，问就是拉，书上给出了一种极为高级的写法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">div&#123;</span><br><span class="line">    width: calc(30% - 1.5em);</span><br><span class="line">    magrin-left: 1.5em;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样不仅能使代码更简单易懂(第一种乍一看看到个29%会感觉莫名其妙)，还能实现不同单位的搭配，% + em ，这谁敢想！？ 总之就是好用就得了，好用且高级。</p>
+<h1 id="元素高度问题"><a href="#元素高度问题" class="headerlink" title="元素高度问题"></a>元素高度问题</h1><p>在写项目的时候我们一般不会给盒子限定高度，因为普通的文档流(浏览器默认的布局模型)是为有限的宽度和无限的高度设计的，所以容器的高度应该由其中的内容决定而不能写定。</p>
+<h2 id="内容溢出的问题"><a href="#内容溢出的问题" class="headerlink" title="内容溢出的问题"></a>内容溢出的问题</h2><p>如果盒子的高度写死了，里面的内容又太多就会出现内容溢出，对此可以为其添加overflow属性，该属性有四个值</p>
+<pre><code>    visible: 默认值，会看见溢出
+    hidden: 隐藏溢出内容
+    scroll: 容器出现滚动条 不管有没有溢出
+    auto: 只有溢出才会出现滚动条
+    一般都用auto而不是scroll
+</code></pre>
+<p>也存在水平溢出的问题，比如一个贼长的url地址，如果让他溢出换行的话会很难看，贼难看，我们就可以用overflow-x单独控制水平溢出(-y单独控制垂直溢出)</p>
+<h2 id="百分比高度备选方案"><a href="#百分比高度备选方案" class="headerlink" title="百分比高度备选方案"></a>百分比高度备选方案</h2><p>之前我们知道width和heigh这些可以设置百分比数值，是相对于他们的父元素解析的，所以想在某一个容器上用百分比数值必须确定该容器的父元素对应的属性有明确的值，不然会造成死循环，最好的选择就是用vh啦，当然也有其他的方法，比如<strong>等高列</strong></p>
+<p>所谓等高列，就是一行内所有的容器都是等高的，无论增加哪个容器的高度，其余容器都会相应变高，有种苟富贵勿相忘的感觉。实现等高列的方法就是让那些容器自己根据自己的内容决定高度，然后拔高较矮的列就行。 有CSS表格和Flexbox两种方法实现。</p>
+<h3 id="CSS表格布局"><a href="#CSS表格布局" class="headerlink" title="CSS表格布局"></a>CSS表格布局</h3><p>表格布局自然就是把父容器的display属性的值设置成table，然后把想要实现等高列的容器的display属性设置为table-cell就行。此时有两个注意点:</p>
+<ol>
+<li>显示为table的元素宽度不会扩展到100%，所以要写定width: 100%</li>
+<li>此时margin值就会失效，等高列之间互相贴合，这时就要用上表格元素的属性 border-spacing来定义单元格之间的间距，该属性接收两个值，分别设置水平间距和垂直间距，但此时直接写的话，由于是水平间距的原因，这就会导致等高列无法跟头部左右两边对齐了，这时就需要在表格容器外面在包一个元素，给他添上一个负的外边距值就可以了，说起来有点复杂，直接看代码</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.container</span>&#123;</span><br><span class="line">    <span class="attribute">margin-left</span>: -<span class="number">1em</span>;</span><br><span class="line">    <span class="attribute">margin-right</span>: -<span class="number">1em</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.table</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>: table;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">    <span class="attribute">border-spacing</span>: <span class="number">1em</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.table-cell</span>&#123;</span><br><span class="line">    <span class="attribute">display</span>: table-cell;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Felxbox"><a href="#Felxbox" class="headerlink" title="Felxbox"></a>Felxbox</h3><p>还可以用flex布局实现等高列<strong>不考虑兼容性就用 遇事不决flex！！！</strong> ，因为flex布局默认产生等高的元素，只要一句display:flex;就能解决，后续会有更详细的介绍，左侧栏搜索即可啦。</p>
+<p>最后 <em><strong>一定不要轻易明确元素的高度！！！</strong></em></p>
+<h2 id="min-height和max-height"><a href="#min-height和max-height" class="headerlink" title="min-height和max-height"></a>min-height和max-height</h2><p>我们可以用这两个属性限定元素的高度在一个范围内，类似的是min-width 和 max-width</p>
+<h1 id="垂直居中和水平居中"><a href="#垂直居中和水平居中" class="headerlink" title="垂直居中和水平居中"></a>垂直居中和水平居中</h1><p>这部分是个大头，因为能实现的方法太多了，要根据不同的情况给出不同的方法，这里说一些可能会用到的方法，我们先看水平居中，这部分相对于而言比较简单 <strong>因为一般情况下容器的宽度是给定的而高度是未给定的</strong></p>
+<h2 id="水平居中"><a href="#水平居中" class="headerlink" title="水平居中"></a>水平居中</h2><p>那么有哪些方法可以实现水平居中呢？</p>
+<h3 id="行内元素水平居中"><a href="#行内元素水平居中" class="headerlink" title="行内元素水平居中"></a>行内元素水平居中</h3><p>这个简单，行内元素就是p啊，button啊啥的这写文本内容，就一句text-align: center;就可以了</p>
+<h3 id="块级元素水平居中"><a href="#块级元素水平居中" class="headerlink" title="块级元素水平居中"></a>块级元素水平居中</h3><p>定宽的水平居中: 该元素宽度给定的话，就 margin: 0 auto;**</p>
+<p>不定宽的水平居: </p>
+<ol>
+<li>该元素宽度不固定，就给要居中的元素设置display:table; margin: 0 auto; </li>
+<li>该元素设置display: inline-block,父元素设置text-align:center;</li>
+<li>flex布局: 只需把要处理的块状元素的父元素设置display:flex,justify-content:center;</li>
+<li>position + 负margin；</li>
+<li>position + margin：auto</li>
+<li>position + transform；</li>
+</ol>
+<p>这里方法4、5、6同下面垂直居中一样的道理，只不过需要把top/bottom改为left/right，在垂直居中部分会详细讲述</p>
+<h2 id="垂直居中"><a href="#垂直居中" class="headerlink" title="垂直居中"></a>垂直居中</h2><h3 id="文本-行内元素-垂直居中"><a href="#文本-行内元素-垂直居中" class="headerlink" title="文本(行内元素)垂直居中"></a>文本(行内元素)垂直居中</h3><p>单行:设置paddingtop=paddingbottom；或 设置line-height=height(容器高度)；</p>
+<p>多行:通过设置父元素table，子元素table-cell和vertical-align;vertical-align:middle的意思是把元素放在父元素的中部</p>
+<h3 id="块级元素垂直居中"><a href="#块级元素垂直居中" class="headerlink" title="块级元素垂直居中"></a>块级元素垂直居中</h3><ol>
+<li>flex布局:在需要垂直居中的父元素上，设置display:flex和align-items：center <strong>父元素的height值必须设置</strong></li>
+<li>定位子绝父相后，需要居中元素设置top: 50%; margin-top: -(自身高度的一半); 所以这个要设置该垂直居中元素的高度</li>
+<li><strong>定位子绝父相后，需要居中元素设置top: 50%; transform: translate(0,-50%) 这个不需要知道该元素自身尺寸</strong>，所以用这个比较好，可能会有兼容性问题</li>
+</ol>
+<h2 id="水平垂直居中"><a href="#水平垂直居中" class="headerlink" title="水平垂直居中"></a>水平垂直居中</h2><p>其实水平居中垂直居中都是为了这个服务的，因为这样最好，中国人嘛，讲究规整嘿嘿，然后有以下几种方法</p>
+<ol>
+<li>绝对定位后加 margin: auto, (top/bottom/rigth/left都为0)</li>
+<li>绝对定位后 利用上述水平居中/垂直居中的方法4和方法2 </li>
+<li>绝对定位后 top: 50%; left: 50%;transform: translate(-50%,-50%),<strong>在未定义尺寸的情况下</strong></li>
+<li>flex布局 就是用上述中flex用的水平/垂直居中方法结合就行</li>
+<li>table-cell 不喜欢用 就不写了</li>
+</ol>
+<p>综上 其实还是推荐用flex布局和transform的，但好像都是C3的写法要考虑兼容性，不太清楚，总之看情况来吧。</p>
+<p><em><strong>这里明确一下负margin，如果给margin的left或者top设置负值，则元素会相应的向左或者上方移动，若是设置right和bottom为负值，则会将相应位置的后续元素拉过来与自身重叠，在有些地方会有妙有，比如上面说的实现居中的时候，但还是减少使用</strong></em></p>
+<h1 id="外边距折叠"><a href="#外边距折叠" class="headerlink" title="外边距折叠"></a>外边距折叠</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p> 在CSS中，两个或多个毗邻的普通流中的盒子（可能是父子元素，也可能是兄弟元素）在垂直方向上的外边距会发生叠加，这种形成的外边距称之为外边距折叠。<br>  关键字：毗邻、两个或多个、垂直方向和普通流</p>
+<h2 id="什么时候会发生外边距折叠呢"><a href="#什么时候会发生外边距折叠呢" class="headerlink" title="什么时候会发生外边距折叠呢"></a>什么时候会发生外边距折叠呢</h2><p>普通流中的块级元素的margin-bottom永远和它相邻的下一个块级元素的margin-top叠加，除非相邻的兄弟元素clear<br>普通流中的块级元素（没有border-top、没有padding-top）的margin-top和它的第一个普通流中的子元素（没有clear）发生margin-top叠加<br>普通流中的块级元素（height为auto、min-height为0、没有border-bottom、没有padding-bottom）和它的最后一个普通流中的子元素（没有自身发生margin叠加或clear）发生margin-bottom叠加<br>如果一个元素的min-height为0、没有border、没有padding、高度为0或者auto、不包含子元素，那么它自身的外边距会发生叠加</p>
+<h2 id="外边距折叠的大小"><a href="#外边距折叠的大小" class="headerlink" title="外边距折叠的大小"></a>外边距折叠的大小</h2><pre><code> 1.两个相同大小的正数：取某个外边距的值。即30px与30px发生折叠，折叠后的值为30px。
+ 2.两个不同大小的正数：取较大的外边距的值。即30px与20px发生折叠，折叠后的值为30px。
+ 3.一正一负：取正数与负数的和。即30px与-20px发生折叠，折叠后的值为10px。
+ 4.相同大小的负数：同相同大小正数。-30px与-30px折叠，折叠后为-30px。
+ 5.不同大小负数： 取绝对值较大的负数。-30px与-20px折叠，折叠后为-30px。
+</code></pre>
+<h2 id="避免外边距的方法"><a href="#避免外边距的方法" class="headerlink" title="避免外边距的方法"></a>避免外边距的方法</h2><ol>
+<li>对容器添加overflow: auto , 防止内部元素的外边距与容器外部外边距折叠，这种方法副作用最小</li>
+<li>在发生折叠的外边距之间加上边框或者内边距</li>
+<li>如果容器为浮动元素，行内块元素，绝对定位或者固定定位时</li>
+<li>使用Flexbox布局或者网格布局</li>
+<li>元素显示为, table-cells, table-row等</li>
+</ol>
+<p>即，创建了BFC的元素不会发生外边距折叠的问题，关于BFC请<a target="_blank" rel="noopener" href="https://www.cnblogs.com/libin-1/p/7098468.html">点击这里</a></p>
+<h1 id="猫头鹰选择器"><a href="#猫头鹰选择器" class="headerlink" title="猫头鹰选择器 * + *"></a>猫头鹰选择器 * + *</h1><p>叫这个名字的原因无它 就是因为长的像猫头鹰而已，其中 +： 相邻兄弟选择器（Adjacent sibling selector）可选择紧接在另一元素后的元素，且二者有相同父元素。<br>猫头鹰选择器会选中<strong>页面上有着相同父元素的非第一个子元素</strong>(比如ul里面会选择第二个往后的所有li)<br>一般用于给他们添加一个统一的margin-top解决边距问题</p>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* + * &#123;</span><br><span class="line">    <span class="attribute">margin-top</span>: <span class="number">2em</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 最后，有:</p>
+<ol>
+<li><em><strong>tag + tag 会选择除第一个tag之外的所有tag</strong></em></li>
+<li><em><strong>因为’margin-left’ + ‘border-left-width’ + ‘padding-left’ + ‘width’ + ‘padding-right’ +’border-right-width’ + ‘margin-right’ = width of containing block ，在我们只设置了margin-left: auto 后为满足上式 ，就有margin-left =  width,故元素会直接到容器的最右边</strong></em></li>
+</ol>
+<p> ok 第三章的笔记就到这，书上的基础部分也结束了，接下来就到了关键的布局咯</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/css/" rel="tag"># css</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/06/12/CssU2/" rel="prev" title="Unit2-相对单位">
+                  <i class="fa fa-chevron-left"></i> Unit2-相对单位
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/06/12/CssU4/" rel="next" title="Unit4-理解浮动">
+                  Unit4-理解浮动 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<span id="timeDate">载入天数...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("05/06/2021 15:13:14");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 " + dnum + " 天 "+ hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lruler</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

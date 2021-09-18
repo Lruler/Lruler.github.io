@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Gemini&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="数据结构上刷算法… 好说歹说算是入门了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探动态规划&#x2F;回溯">
+<meta property="og:url" content="http://example.com/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.html">
+<meta property="og:site_name" content="Le-zone">
+<meta property="og:description" content="数据结构上刷算法… 好说歹说算是入门了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/fib.png">
+<meta property="og:image" content="http://example.com/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/jueceshu.png">
+<meta property="article:published_time" content="2021-09-15T11:41:21.000Z">
+<meta property="article:modified_time" content="2021-09-17T11:32:08.697Z">
+<meta property="article:author" content="Lruler">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/fib.png">
+
+
+<link rel="canonical" href="http://example.com/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;09&#x2F;15&#x2F;%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;09&#x2F;15&#x2F;初探动态规划&#x2F;&quot;,&quot;title&quot;:&quot;初探动态规划&#x2F;回溯&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>初探动态规划/回溯 | Le-zone</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Le-zone" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Le-zone</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%95%E4%B8%BA%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">1.</span> <span class="nav-text">何为动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB%E6%96%B9%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">状态转移方程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B8%E4%B8%AD%E5%85%B8%E7%9A%84%E5%87%91%E7%A1%AC%E5%B8%81"><span class="nav-number">1.2.</span> <span class="nav-text">典中典的凑硬币</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">回溯算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E6%8E%92%E5%88%97"><span class="nav-number">2.1.</span> <span class="nav-text">全排列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.</span> <span class="nav-text">N皇后问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%BA%AF%E5%92%8C%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">2.3.</span> <span class="nav-text">回溯和动态规划</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lruler"
+      src="https://avatars.githubusercontent.com/u/75160088?v=4">
+  <p class="site-author-name" itemprop="name">Lruler</p>
+  <div class="site-description" itemprop="description">Passionate love is a thirst</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Lruler" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Lruler" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1204312199@qq.com" title="E-Mail → mailto:1204312199@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/75160088?v=4">
+      <meta itemprop="name" content="Lruler">
+      <meta itemprop="description" content="Passionate love is a thirst">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Le-zone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          初探动态规划/回溯
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-15 19:41:21" itemprop="dateCreated datePublished" datetime="2021-09-15T19:41:21+08:00">2021-09-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-17 19:32:08" itemprop="dateModified" datetime="2021-09-17T19:32:08+08:00">2021-09-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>数据结构上刷算法… 好说歹说算是入门了</p>
+<span id="more"></span>
+
+<h1 id="何为动态规划"><a href="#何为动态规划" class="headerlink" title="何为动态规划"></a>何为动态规划</h1><p>怎么说呢，动态规划就是是一种分治的思想，换句话说，就是把一个大问题，拆分成小问题，再把小问题接着拆分，拆到无可再分的时候，会得到最小的子问题，而子问题的答案很轻松就能得到，根据这个答案递推回去，就能得到原本问题的答案，是一种自底而上的做法。（当然也有自顶而下的方法）。动态规划核心套路是“穷举求最优解”，然后利用状态转移方程进行<strong>正确的穷举</strong>，也就是取消重叠子问题。<br>即，动态规划分治穷举后，两个重要特性就是 <strong>重叠子问题</strong>和<strong>最优子结构</strong></p>
+<h2 id="状态转移方程"><a href="#状态转移方程" class="headerlink" title="状态转移方程"></a>状态转移方程</h2><p>刚刚提到一个核心的概念，就是状态转移方程，这是做动态规划类问题最重要的一个步骤，也是最抽象的一个步骤，我们能想到状态转移方程就代表这道题我们理解了大半了，我们由斐波那契数列入手来引出这个概念。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fib</span> (<span class="params">i</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (N == <span class="number">1</span> || N == <span class="number">2</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> fib(N - <span class="number">1</span>) + fib(N - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很简单吧，直接暴力递归，但是贼低效，鲁迅说过“所有递归问题都可以看作是树问题”，那我们就看看这个递归调用时的树，假设i = 20;<br><img src="/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/fib.png" alt="fib"><br>看看时间复杂度？O(2^n)，直接裂开来，而且你会发现有大量的重复计算，比如f(18)和f(17)都被计算了两次，更往下的子节点被重复计算的次数更多，这就是之前提到的<strong>重叠子问题</strong>，所以为了解决这个问题，我们引入一个备忘录。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fib</span> (<span class="params">n</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> dp = <span class="keyword">new</span> <span class="built_in">Array</span>(n + <span class="number">1</span>).fill(<span class="number">0</span>)</span><br><span class="line">  dp[<span class="number">1</span>] = dp [<span class="number">2</span>] = <span class="number">1</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">3</span>; i &lt;= n - <span class="number">1</span>; i++)</span><br><span class="line">    dp[i] = dp[i - <span class="number">1</span>] +  dp[i - <span class="number">2</span>]</span><br><span class="line">  <span class="keyword">return</span> dp[n]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这我们可以得知，我们知道这是第n代的兔子，让我们去求第n代兔子的总数，也就是dp(n),并且dp(n) = dp(n-1) + dp(n-2)，哎，那求dp(n)的问题是不是就转移到求dp(n-1) + dp(n-2)了，这个就叫状态转移方程，当然不要忘了n = 1 和n = 2的情况。综上，我们得到斐波那契数列的状态转移方程</p>
+<p>dp(n) = { 1,  n = 1,2<br>{dp(n-1) + dp(n-2), n &gt; 2</p>
+<p>这里解决了<strong>重叠子问题</strong>，那动态规划另一个重要特性<strong>最优子结构</strong>呢？<br>因为斐波那契不算真正的动态规划问题，写这个主要是为了引入如何抽象出状态转移方程，对于最优子结构，让我们往下看。</p>
+<h2 id="典中典的凑硬币"><a href="#典中典的凑硬币" class="headerlink" title="典中典的凑硬币"></a>典中典的凑硬币</h2><p>说起动态规划就不得不提凑硬币的问题，太经典了属于是。再说凑硬币问题前我们简单聊一聊贪心算法，贪心算法其实是动态规划的一个特例，动态规划是一只分分分分分到最后找出最优解，而贪心是先分解若干个子问题，找出最优，再从这个最优子问题中接着分解，也就是说<strong>贪心算法是每一都要求出最优解的动态规划问题</strong>。<br>这里说回来凑硬币问题，比如我们有面值为1，5，11元的硬币，要求凑出15元所用的最少硬币数。用贪心的话就是，第一步的最优解肯定是面值最大的11元，然后还差四元就需要用四枚一元硬币，一共五枚。而这道题真正的最优解其实是三枚五元硬币，这样就能看出贪心和动态规划的区别了。<br>那么这道题我们该如何思考呢？又或者是说怎么列出状态转移方程？仔细思考一下，我们之前有提到过动态分解到最小子问题后往上递归，也就是“自低而上”的思维，那这个问题的最底部显然就是0个硬币凑0元，再往上也就是一个硬币， 也就是凑了1，5，11元还剩14，10，4元，分别需要 dp[14]+1,dp[10]+1,dp[4]+1个，（这里dp[n]是凑n元需要的硬币数，这里因为要求最少硬币数，所以需要在dp[14],dp[10],dp[1]中找出最优的情况，所以底层往上的第一步，就是<br>dp[15] = min(dp[15-1],dp[15-5],dp[15-10])+1,这里15由未知数代替，考虑边界情况，也就是n&lt;=0的情况，那我们不就能得到状态转移方程了？<br>dp[n] = { 0 ,n&lt;=0<br>{min(dp[15 - coin]), n&gt;0<br>得到状态转移方程，再用自底而上的思维，得出代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> changeCoin = <span class="function">(<span class="params">coins,amount</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 初始化备忘录,用Infinity填满备忘录，Infinity说明该值不可以用硬币凑出来</span></span><br><span class="line">  <span class="keyword">let</span> dp = newArray(amount + <span class="number">1</span>).fill(<span class="literal">Infinity</span>)</span><br><span class="line">  dp[<span class="number">0</span>] = [<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= amount; i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">const</span> coin <span class="keyword">of</span> coins)&#123;</span><br><span class="line">            <span class="keyword">if</span>(coin &lt;= i)</span><br><span class="line">        dp[i] = <span class="built_in">Math</span>.min(dp[i], dp[i - coin] + <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[amount] === <span class="literal">Infinity</span> ? -<span class="number">1</span> : dp[amount]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就结束啦！<br>那么最后，怎样判断一个问题是不是动态规划问题呢？<br>一般有</p>
+<ul>
+<li>求最大值，最小值</li>
+<li>判断方案是否可行</li>
+<li>统计方案个数</li>
+<li>子问题是否满足最优子结构，即每个子问题都不影响其他子问题</li>
+</ul>
+<h1 id="回溯算法"><a href="#回溯算法" class="headerlink" title="回溯算法"></a>回溯算法</h1><p>看完动态规划，我们就简单说一下回溯，回溯重点就是这个“回”字，他从本质上来说就是遍历决策树的过程，我们需要抓住这三点：</p>
+<ul>
+<li>路径 也就是做过的选择</li>
+<li>选择列表 当前可以选择的部分</li>
+<li>结束条件 到达决策树底部，没有新的选择</li>
+</ul>
+<p>回溯是有框架的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">result = []</span><br><span class="line">def backtrack(路径, 选择列表): <span class="keyword">if</span> 满足结束条件:</span><br><span class="line">result.add(路径) <span class="keyword">return</span></span><br><span class="line"><span class="keyword">for</span> 选择 <span class="keyword">in</span> 选择列表: 做选择</span><br><span class="line">backtrack(路径, 选择列表) 撤销选择</span><br></pre></td></tr></table></figure>
+<p>可以看到 这串代码的核心是，递归调用 backtrack，并且在递归之前做选择，递归之后撤销选择就行。</p>
+<h2 id="全排列"><a href="#全排列" class="headerlink" title="全排列"></a>全排列</h2><p>最基本的回溯问题就是全排列问题了，就比如给我们【1，2，3】三个数字，求出他们不重复情况的全排列，可以得到以下决策树<br><img src="/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/jueceshu.png" alt="jcs"><br>我们站在决策树的顶端，此时我们的选择列表是【1，2，3】，没有路径，因为我们还没做过选择，假设我们选择2后到达第二个节点，那么我们的选择列表是【1，3】，2就变成了我们的路径，然后 backtrack函数，就像是个指针，在这个树上游走，要维护每个节点的选择列表和路径，当它走到树的底层后，就触发了结束条件。<br>再然后，如何遍历一个树？ 要记住，所有搜索问题其实都是树的遍历问题，而多叉树的遍历，有两个重要框架，前序遍历和后序遍历，前序遍历在递归进入下一个节点前进行，后续遍历在进入一个节点后执行，前序遍历让多叉树得以向某一子节点递归，后序遍历可以让多叉树依次对多个子节点递归遍历，依照这个思路以及前面的框架，我们得出全排列代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> allSort = <span class="function">(<span class="params">nums</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> res = []</span><br><span class="line">  backTrack = <span class="function">(<span class="params">path</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="comment">// 判断是否满足结束条件</span></span><br><span class="line">    <span class="keyword">if</span>(nums.length === path.length)&#123;</span><br><span class="line">      res.push([...path])  </span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解决重复路径</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; nums.length; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(path.indexOf(nums[i]) !== -<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">/** 前序遍历 */</span></span><br><span class="line">      path.push(nums[i])</span><br><span class="line"></span><br><span class="line">      backTrack(path)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 后序遍历</span></span><br><span class="line">      path.pop()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  backTrack([])</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="N皇后问题"><a href="#N皇后问题" class="headerlink" title="N皇后问题"></a>N皇后问题</h2><p>这个也是回溯经典啊，单比全排列稍微复杂一丢丢，题目的意思就是给我们一个N x N的棋盘，在上面摆N个皇后，让这些皇后不能互相攻击，问我们有几种摆法。<br>然后写回溯问题，我们一定要想明白它的决策树，和写动态规划要想明白df方程是一样的。<br>对于N皇后的决策树，我们可以想决策树的每一层，就是棋盘上的每一行，然后那一层的每一个节点，对应的就是棋盘上那一行的每个列。<br>直接套用上面框架</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Queen = <span class="function">(<span class="params">n</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> board = <span class="keyword">new</span> <span class="built_in">Array</span>(n).fill(<span class="string">&#x27;.&#x27;</span>.repeat(n))</span><br><span class="line">  <span class="keyword">let</span> res = []</span><br><span class="line">  isValid = <span class="function">(<span class="params">board, row, col</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> len = board.length</span><br><span class="line">    <span class="comment">//检查列皇后是否冲突</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][col] === <span class="string">&#x27;Q&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查左对角线冲突</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>,j = col + <span class="number">1</span>; i &gt;= <span class="number">0</span> &amp;&amp; j &lt; n; i--, j++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][j] === <span class="string">&#x27;Q&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查右对角线冲突，</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>,j = col - <span class="number">1</span>; i &gt;= <span class="number">0</span> &amp;&amp; j &gt;= <span class="number">0</span>; i--, j--)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][j] === <span class="string">&#x27;Q&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  repalceAt = <span class="function">(<span class="params">str,index,target</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="keyword">const</span> strAry = str.split(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    strAry[index] = target</span><br><span class="line">    <span class="keyword">return</span> strAry.join(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  backTrack = <span class="function">(<span class="params">board, row</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="comment">// 终止条件</span></span><br><span class="line">    <span class="keyword">if</span>(row === board.length)&#123;</span><br><span class="line">      res.push([...board])</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> len = board.length</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> col = <span class="number">0</span>; col &lt; len; col++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(!isValid(board,row,col))&#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">       </span><br><span class="line">      <span class="comment">//前序</span></span><br><span class="line">      board[row] = repalceAt(board[row],col,<span class="string">&#x27;Q&#x27;</span>)</span><br><span class="line"></span><br><span class="line">      backTrack(board, row + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">      <span class="comment">//后序</span></span><br><span class="line">      board[row] =repalceAt(board[row],col,<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;  </span><br><span class="line">  backTrack(board,<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="回溯和动态规划"><a href="#回溯和动态规划" class="headerlink" title="回溯和动态规划"></a>回溯和动态规划</h2><p>至此回溯就简单的说到这了啊<br>这里我们看到回溯和动态规划的联系和区别，联系就是，二者都需要通过穷举来解题，但动态规划需要通过备忘录解决重叠子问题来优化并找出最佳答案，而回溯就算真正的暴力求解了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/15/react%E6%BA%90%E7%A0%81%E5%88%9D%E6%8E%A2/" rel="prev" title="react源码初探">
+                  <i class="fa fa-chevron-left"></i> react源码初探
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<span id="timeDate">载入天数...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("05/06/2021 15:13:14");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 " + dnum + " 天 "+ hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lruler</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
