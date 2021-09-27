@@ -1500,6 +1500,17 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
   <entry>
     <title>动画与Canvas图形</title>
     <url>/2021/09/26/%E5%8A%A8%E7%94%BB%E4%B8%8ECanvas%E5%9B%BE%E5%BD%A2/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<p>这篇博客记录下红宝书上的canvas和动画</p>
+<span id="more"></span>
+
+<h1 id="Js动画"><a href="#Js动画" class="headerlink" title="Js动画"></a>Js动画</h1><p>早起的Js动画只能用定时器写，结合css的animation和transition来完成，但定时器在浏览器的时间精度是个问题，就会造成动画不流畅，延时等问题，所以这里就有新的API来解决这个问题</p>
+<h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><p>requesetAnimationFrame()，该接口的参数是一个函数(就是用于执行动画的函数)，该接口的作用就是通知浏览器“我要放一个动画你麻溜的准备好”，然后调用参数函数来精确的完成动画。然后参数函数是一个要在重绘屏幕前调用的函数，这个函数就是修改DOM样式以及反映下一次重绘有什么变化的地方。为了实现动画循环，可以再该函数内部再次调用requesetAnimationFrame()。</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
+      </tags>
   </entry>
 </search>
