@@ -9,13 +9,6 @@
   </url>
   
   <url>
-    <loc>http://example.com/2021/10/05/Umijs/</loc>
-    
-    <lastmod>2021-10-05</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://example.com/2021/09/26/%E5%8A%A8%E7%94%BB%E4%B8%8ECanvas%E5%9B%BE%E5%BD%A2/</loc>
     
     <lastmod>2021-10-02</lastmod>
@@ -284,13 +277,6 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/ts/</loc>
-    <lastmod>2021-10-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://example.com/tags/git/</loc>
     <lastmod>2021-10-17</lastmod>
     <changefreq>daily</changefreq>
@@ -299,6 +285,13 @@
   
   <url>
     <loc>http://example.com/tags/%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2021-10-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/ts/</loc>
     <lastmod>2021-10-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
