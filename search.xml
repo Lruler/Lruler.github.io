@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Cookie/Session/Token/localStorage</title>
+    <url>/2021/09/24/Cookie-Session-Token-localStorage/</url>
+    <content><![CDATA[<p>目前对于和http相关的东西了解不算多，认知还比较浅，就来写一篇博客对cookie这些东西简单的了解一下</p>
+<span id="more"></span>
+
+<h1 id="什么是Cookie"><a href="#什么是Cookie" class="headerlink" title="什么是Cookie"></a>什么是Cookie</h1><p>什么是cookie？</p>
+<ol>
+<li>Cookie是浏览器访问服务器后，服务器传给浏览器的数据</li>
+<li>浏览器需要保存这段数据，不能轻易删除</li>
+<li>以后每次浏览器都要访问该服务器，都需要带上刚数据</li>
+</ol>
+<h2 id="如何使用Cookie"><a href="#如何使用Cookie" class="headerlink" title="如何使用Cookie"></a>如何使用Cookie</h2><p>cookie一般有两个作用</p>
+<ol>
+<li>识别用户身份<br>如果用户A用浏览器访问了服务器a.com,a.com的服务器就会立刻给A返回一段数据“uid = 1”(可以理解为这就是cookie)。当A再次访问a.com的其他页面时，就会附带上”uid = 1”的数据。<br>同理，用户B再次访问服务器a.com,然后a.com发现用户B没有附带uid数据，就给B分配了一个新的uid,为2，然后给B返回一段数据”uid = 2”,B之后再次访问a.com的时候就会一直带上“uid = 2”这段数据，借此a.com就能就能区分A和B两个用户了。</li>
+<li>记录历史<br>假设 <a href="http://a.com/">http://a.com</a> 是一个购物网站，当 A 在上面将商品 A1 、A2 加入购物车时，JS 可以改写 Cookie，改为「uid=1; cart=A1,A2」，表示购物车里有 A1 和 A2 两样商品了。<br>这样一来，当用户关闭网页，过三天再打开网页的时候，依然可以看到 A1、A2 躺在购物车里，因为浏览器并不会无缘无故地删除这个 Cookie。<br>借此，就达到里记录用户操作历史的目的了。<br>（上面的例子只是为了让大家了解 Cookie 的作用而构想出来的，实际的网站使用 Cookie 时会更谨慎一些。）</li>
+</ol>
+<h2 id="cookie和localstorage-sessionStorge"><a href="#cookie和localstorage-sessionStorge" class="headerlink" title="cookie和localstorage,sessionStorge"></a>cookie和localstorage,sessionStorge</h2><p><img src="/2021/09/24/Cookie-Session-Token-localStorage/cookie.png" alt="cookie"></p>
+<h3 id="场景考虑"><a href="#场景考虑" class="headerlink" title="场景考虑"></a>场景考虑</h3><p>因为考虑到每个 HTTP 请求都会带着 Cookie 的信息，所以 Cookie 当然是能精简就精简啦，比较常用的一个应用场景就是判断用户是否登录。针对登录过的用户，服务器端会在他登录时往 Cookie 中插入一段加密过的唯一辨识单一用户的辨识码，下次只要读取这个值就可以判断当前用户是否登录啦。曾经还使用 Cookie 来保存用户在电商网站的购物车信息，如今有了 localStorage，似乎在这个方面也可以给 Cookie 放个假了~</p>
+<p>而另一方面 localStorage 接替了 Cookie 管理购物车的工作，同时也能胜任其他一些工作。比如HTML5游戏通常会产生一些本地数据，localStorage 也是非常适用的。如果遇到一些内容特别多的表单，为了优化用户体验，我们可能要把表单页面拆分成多个子页面，然后按步骤引导用户填写。这时候 sessionStorage 的作用就发挥出来了。</p>
+<p>需要注意的是，不是什么数据都适合放在 Cookie、localStorage 和 sessionStorage 中的。使用它们的时候，需要时刻注意是否有代码存在 XSS 注入的风险。因为只要打开控制台，你就随意修改它们的值，也就是说如果你的网站中有 XSS 的风险，它们就能对你的 localStorage 肆意妄为。所以千万不要用它们存储你系统中的敏感数据。</p>
+<h2 id="cookie和session，token"><a href="#cookie和session，token" class="headerlink" title="cookie和session，token"></a>cookie和session，token</h2><p><img src="/2021/09/24/Cookie-Session-Token-localStorage/1515111-20200405090920745-1422513552.png" alt="1"></p>
+<h3 id="cookie-session"><a href="#cookie-session" class="headerlink" title="cookie/session"></a>cookie/session</h3><p>HTTP 协议是一种无状态协议，即每次服务端接收到客户端的请求时，都是一个全新的请求，服务器并不知道客户端的历史请求记录；Session 和 Cookie 的主要目的就是为了弥补 HTTP 的无状态特性。</p>
+<p>Session 是什么<br>客户端请求服务端，服务端会为这次请求开辟一块内存空间，这个对象便是 Session 对象，存储结构为 ConcurrentHashMap。Session 弥补了 HTTP 无状态特性，服务器可以利用 Session 存储客户端在同一个会话期间的一些操作记录。</p>
+<p>Session 如何判断是否是同一会话<br>服务器第一次接收到请求时，开辟了一块 Session 空间（创建了Session对象），同时生成一个 sessionId ，并通过响应头的 **Set-Cookie：JSESSIONID=XXXXXXX **命令，向客户端发送要求设置 Cookie 的响应； 客户端收到响应后，在本机客户端设置了一个 **JSESSIONID=XXXXXXX **的 Cookie 信息，该 Cookie 的过期时间为浏览器会话结束<br><img src="/2021/09/24/Cookie-Session-Token-localStorage/2.png" alt="2"><br>接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie信息（包含 sessionId ）， 然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。</p>
+<p>Session 的缺点<br>Session 机制有个缺点，比如 A 服务器存储了 Session，就是做了负载均衡后，假如一段时间内 A 的访问量激增，会转发到 B 进行访问，但是 B 服务器并没有存储 A 的 Session，会导致 Session 的失效。</p>
+<p>而HTTP 协议中的 Cookie 包括 Web Cookie 和浏览器 Cookie，它是服务器发送到 Web 浏览器的一小块数据。服务器发送到浏览器的 Cookie，浏览器会进行存储，并与下一个请求一起发送到服务器。通常，它用于判断两个请求是否来自于同一个浏览器，例如用户保持登录状态。</p>
+<p>也就是说<br>由于http的无状态性，为了使某个域名下的所有网页能够共享某些数据，session和cookie出现了。客户端访问服务器的流程如下</p>
+<ol>
+<li>首先，客户端会发送一个http请求到服务器端。</li>
+<li>服务器端接受客户端请求后，建立一个session，并发送一个http响应到客户端，这个响应头，其中就包含Set-Cookie头部。该头部包含了sessionId。Set-Cookie格式如下，具体请看Cookie详解 Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]</li>
+<li>在客户端发起的第二次请求，假如服务器给了set-Cookie，浏览器会自动在请求头中添加cookie</li>
+<li>服务器接收请求，分解cookie，验证信息，核对成功后返回response给客户端<br><img src="/2021/09/24/Cookie-Session-Token-localStorage/3.png" alt="3"></li>
+</ol>
+<p><strong>注意</strong><br>cookie只是实现session的其中一种方案。虽然是最常用的，但并不是唯一的方法。禁用cookie后还有其他方法存储，比如放在url中<br>现在大多都是Session + Cookie，但是只用session不用cookie，或是只用cookie，不用session在理论上都可以保持会话状态。可是实际中因为多种原因，一般不会单独使用<br>用session只需要在客户端保存一个id，实际上大量数据都是保存在服务端。如果全部用cookie，数据量大的时候客户端是没有那么多空间的。<br>如果只用cookie不用session，那么账户信息全部保存在客户端，一旦被劫持，全部信息都会泄露。并且客户端数据量变大，网络传输的数据量也会变大<br>简而言之, session 有如用户信息档案表, 里面包含了用户的认证信息和登录状态等信息. 而 cookie 就是用户通行证</p>
+<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p>token 也称作令牌，由uid+time+sign[+固定参数]<br>token 的认证方式类似于临时的证书签名, 并且是一种服务端无状态的认证方式, 非常适合于 REST API 的场景. 所谓无状态就是服务端并不会保存身份认证相关的数据。<br>组成</p>
+<ul>
+<li>uid: 用户唯一身份标识</li>
+<li>time: 当前时间的时间戳</li>
+<li>sign: 签名, 使用 hash/encrypt 压缩成定长的十六进制字符串，以防止第三方恶意拼接</li>
+<li>固定参数(可选): 将一些常用的固定参数加入到 token 中是为了避免重复查库</li>
+</ul>
+<p>token在客户端一般存放于localStorage，cookie，或sessionStorage中。在服务器一般存于数据库中</p>
+<p>token 的认证流程与cookie很相似</p>
+<ul>
+<li>用户登录，成功后服务器返回Token给客户端。</li>
+<li>客户端收到数据后保存在客户端</li>
+<li>客户端再次访问服务器，将token放入headers中</li>
+<li>服务器端采用filter过滤器校验。校验成功则返回请求数据，校验失败则返回错误码</li>
+</ul>
+<p><strong>token可以抵抗csrf，cookie+session不行</strong><br>假如用户正在登陆银行网页，同时登陆了攻击者的网页，并且银行网页未对csrf攻击进行防护。攻击者就可以在网页放一个表单，该表单提交src为<a href="http://www.bank.com/api/transfer%EF%BC%8Cbody%E4%B8%BAcount=1000&amp;to=Tom%E3%80%82%E5%80%98%E8%8B%A5%E6%98%AFsession+cookie%EF%BC%8C%E7%94%A8%E6%88%B7%E6%89%93%E5%BC%80%E7%BD%91%E9%A1%B5%E7%9A%84%E6%97%B6%E5%80%99%E5%B0%B1%E5%B7%B2%E7%BB%8F%E8%BD%AC%E7%BB%99Tom1000%E5%85%83%E4%BA%86.%E5%9B%A0%E4%B8%BAform">http://www.bank.com/api/transfer，body为count=1000&amp;to=Tom。倘若是session+cookie，用户打开网页的时候就已经转给Tom1000元了.因为form</a> 发起的 POST 请求并不受到浏览器同源策略的限制，因此可以任意地使用其他域的 Cookie 向其他域发送 POST 请求，形成 CSRF 攻击。在post请求的瞬间，cookie会被浏览器自动添加到请求头中。但token不同，token是开发者为了防范csrf而特别设计的令牌，浏览器不会自动添加到headers里，攻击者也无法访问用户的token，所以提交的表单无法通过服务器过滤，也就无法形成攻击。</p>
+<p>分布式情况下的session和token<br>我们已经知道session时有状态的，一般存于服务器内存或硬盘中，当服务器采用分布式或集群时，session就会面对负载均衡问题。</p>
+<ul>
+<li>负载均衡多服务器的情况，不好确认当前用户是否登录，因为多服务器不共享session。这个问题也可以将session存在一个服务器中来解决，但是就不能完全达到负载均衡的效果。当今的几种解决session负载均衡的方法。</li>
+</ul>
+<p>而token是无状态的，token字符串里就保存了所有的用户信息</p>
+<ul>
+<li>客户端登陆传递信息给服务端，服务端收到后把用户信息加密（token）传给客户端，客户端将token存放于localStroage等容器中。客户端每次访问都传递token，服务端解密token，就知道这个用户是谁了。通过cpu加解密，服务端就不需要存储session占用存储空间，就很好的解决负载均衡多服务器的问题了。这个方法叫做JWT(Json Web Token)<br>关于JWT可以看 （<a href="https://www.cnblogs.com/cxuanBlog/p/12635842.html%EF%BC%89">https://www.cnblogs.com/cxuanBlog/p/12635842.html）</a></li>
+</ul>
+<p>session存储于服务器，可以理解为一个状态列表，拥有一个唯一识别符号sessionId，通常存放于cookie中。服务器收到cookie后解析出sessionId，再去session列表中查找，才能找到相应session。依赖cookie<br>cookie类似一个令牌，装有sessionId，存储在客户端，浏览器通常会自动添加。<br>token也类似一个令牌，无状态，用户信息都被加密到token中，服务器收到token后解密就可知道是哪个用户。需要开发者手动添加。<br>jwt只是一个跨域认证的方案</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>网络知识</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Unit1-层叠，优先级，继承</title>
     <url>/2021/06/12/CssU1/</url>
     <content><![CDATA[<p>从现在开始系统学习Css啦，也就是把css in depth 好好看一遍，这是第一单元的笔记</p>
@@ -113,30 +181,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Unit5-Flexbox</title>
-    <url>/2021/06/12/CssU5/</url>
-    <content><![CDATA[<p>Css in depth 第五章 flexbox 的学习笔记</p>
-<span id="more"></span>
-
-
-<h1 id="Flexbox-原则"><a href="#Flexbox-原则" class="headerlink" title="Flexbox 原则"></a>Flexbox 原则</h1><p>从display属性开始，当我们给一个元素添加display:flex后，该容器就会变成一个弹性容器，它的直接子元素就变成了弹性子元素，弹性子元素默认是在同一行按照从左到右的顺序并排排列。 弹性容器和块级容器一样自动填满可用的宽度，但弹性子元素不一定会填满容器的宽度弹性子元素高度相等，该高度由他们的内容决定。</p>
-<p>然后弹性容器里面有两个坐标轴，主轴为水平x(默认，从左到右)和副轴y(从上到下)，子元素就会默认沿主轴排列，并成等高列形式。</p>
-<h1 id="容器属性"><a href="#容器属性" class="headerlink" title="容器属性"></a>容器属性</h1><p>接下来就要看看flex布局的属性了，这部分是核心，了解他们才能熟练掌握flex布局，接下来先看看容器属性，也就是通过在弹性容器中设置属性来操纵弹性子元素</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. flex-direction: 设置主轴方向</span><br><span class="line">&#123;</span><br><span class="line">    row  //默认</span><br><span class="line">    row-reverse  //从右到左</span><br><span class="line">    column  //从上到下</span><br><span class="line">    column-reverse //从下到上</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">2. justify-content: 设置主轴上子元素排列方式</span><br><span class="line">&#123;</span><br><span class="line">    flex-start  //默认</span><br><span class="line">    flex-end  //从尾部开始</span><br><span class="line">    center  //居中对齐</span><br><span class="line">    space-around //平分剩余空间</span><br><span class="line">    space-between //先两边贴合 再平分剩余空间</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">3. flex-warp: 设置子元素是否换行</span><br><span class="line">&#123;</span><br><span class="line">    nowarp  //默认不换行</span><br><span class="line">    wrap  //换行</span><br><span class="line">    wrap-reverse  //换行，第一行往下</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">4. align-items: 设置侧轴子元素排列方式 (单行)</span><br><span class="line">&#123;</span><br><span class="line">    flex //侧轴默认方向</span><br><span class="line">    flex-end  //默认反向</span><br><span class="line">    center  //居中</span><br><span class="line">    stretch  //拉伸(默认)</span><br><span class="line">    baseline  //取内容第一行文字基线对齐</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">5. align-content: 设置侧轴子元素排列方式(多行)</span><br><span class="line">&#123;</span><br><span class="line">    其他属性和单行相同，多了space-around 和 space-bettwen</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">6. flex-flow 同时设置 flex-direction 和 flex-warp </span><br></pre></td></tr></table></figure>
-
-<h1 id="item-属性"><a href="#item-属性" class="headerlink" title="item 属性"></a>item 属性</h1><p>接下来再看看子相属性</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">order 定义项目排列顺序 数值越小 排列越靠前</span><br><span class="line">flex-basis 定义了该item(弹性子元素)尺寸的基准值，默认是auto，即项目由本身内容决定的尺寸，该值可以是任意width单位值，</span><br><span class="line">flex-grow  每个item的增长比例，即用于平分剩余空间时所占的比例</span><br><span class="line">flex-shrink  每个item的缩小比例 即内容溢出后所占的缩小比例</span><br><span class="line">flex： flex-gorw，flex-shrink，flex-basis 的合写</span><br><span class="line">align-self 用于设置单个item的对齐方式，可以覆盖align-items 值与其相等</span><br></pre></td></tr></table></figure>
-
-<p>Okey Flex到此为止咯</p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>css</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Unit2-相对单位</title>
     <url>/2021/06/12/CssU2/</url>
     <content><![CDATA[<p>Css in depth 第二章学习笔记</p>
@@ -177,71 +221,85 @@
       </tags>
   </entry>
   <entry>
-    <title>Cookie/Session/Token/localStorage</title>
-    <url>/2021/09/24/Cookie-Session-Token-localStorage/</url>
-    <content><![CDATA[<p>目前对于和http相关的东西了解不算多，认知还比较浅，就来写一篇博客对cookie这些东西简单的了解一下</p>
+    <title>Unit4-理解浮动</title>
+    <url>/2021/06/12/CssU4/</url>
+    <content><![CDATA[<p>Css in depth 第四章笔记</p>
 <span id="more"></span>
 
-<h1 id="什么是Cookie"><a href="#什么是Cookie" class="headerlink" title="什么是Cookie"></a>什么是Cookie</h1><p>什么是cookie？</p>
-<ol>
-<li>Cookie是浏览器访问服务器后，服务器传给浏览器的数据</li>
-<li>浏览器需要保存这段数据，不能轻易删除</li>
-<li>以后每次浏览器都要访问该服务器，都需要带上刚数据</li>
+
+<h1 id="什么是浮动"><a href="#什么是浮动" class="headerlink" title="什么是浮动"></a>什么是浮动</h1><p>就飘起来浮上去呗，在普通文档流中一个块级元素就是占据一行的，添加浮动后下面的元素就都跑到一行来了，满了塞不下了就换行，这就是浮动(我这解释有点破哈)，<br>并且浮动的元素具有行内块元素的特征，并不会保留原先的位置。<br>块级元素的宽=宽度默认情况下和父元素一致，而添加浮动后它的尺寸就根据内容决定了。<br>而设计浮动的初衷其实是为了实现这种效果</p>
+<p><img src="/2021/06/12/CssU4/1.png" alt="1"></p>
+<p>实现文字包围图片，跟报纸那样的。虽然现在浮动用的不多，很多东西都能代替浮动，比如flex布局，但还是很有必要学习浮动的，因为想要实现把图片移动到浏览器的一侧，或者文字围绕图片，浮动仍然是唯一的选择</p>
+<h1 id="清除浮动"><a href="#清除浮动" class="headerlink" title="清除浮动"></a>清除浮动</h1><h2 id="为什么要清除浮动"><a href="#为什么要清除浮动" class="headerlink" title="为什么要清除浮动"></a>为什么要清除浮动</h2><p>父元素容器很多情况下不方便给定高度，子元素添加浮动后又释放了原本的位置，那么父容器就成了一个高度为0且没有内容的容器，会影响下面普通文档流的其他元素，所以就需要清除该浮动带来的副作用。</p>
+<p>如果父元素本身有高度则不需要清除浮动，同样，清除浮动后父元素会根据子元素的内容来改变自身的高度，就不会影响后面的标准流(普通文档流)的元素来</p>
+<h2 id="清除浮动的方法"><a href="#清除浮动的方法" class="headerlink" title="清除浮动的方法"></a>清除浮动的方法</h2><ol>
+<li><p>额外标签法(w3c推荐做法)<br>在浮动的元素后面添加一个 <code>&lt;div class=&#39;clear&#39;&gt;</code>,并写上</p>
+<pre><code> .clear&#123;
+     clear:both;
+ &#125;
+</code></pre>
+</li>
+<li><p>给父元素容器添加overflow属性(不是默认值就行)</p>
+</li>
+<li><p>伪元素法 类似于额外标签法，不过是用伪元素实现，假设父元素容器class=’clearfix’</p>
+<pre><code> .clearfix:after&#123;
+     content: &#39;&#39;;
+     display: block;
+     height: 0;
+     clear: both;
+     visibility: hidden;
+ &#125;
+</code></pre>
+</li>
 </ol>
-<h2 id="如何使用Cookie"><a href="#如何使用Cookie" class="headerlink" title="如何使用Cookie"></a>如何使用Cookie</h2><p>cookie一般有两个作用</p>
-<ol>
-<li>识别用户身份<br>如果用户A用浏览器访问了服务器a.com,a.com的服务器就会立刻给A返回一段数据“uid = 1”(可以理解为这就是cookie)。当A再次访问a.com的其他页面时，就会附带上”uid = 1”的数据。<br>同理，用户B再次访问服务器a.com,然后a.com发现用户B没有附带uid数据，就给B分配了一个新的uid,为2，然后给B返回一段数据”uid = 2”,B之后再次访问a.com的时候就会一直带上“uid = 2”这段数据，借此a.com就能就能区分A和B两个用户了。</li>
-<li>记录历史<br>假设 <a href="http://a.com/">http://a.com</a> 是一个购物网站，当 A 在上面将商品 A1 、A2 加入购物车时，JS 可以改写 Cookie，改为「uid=1; cart=A1,A2」，表示购物车里有 A1 和 A2 两样商品了。<br>这样一来，当用户关闭网页，过三天再打开网页的时候，依然可以看到 A1、A2 躺在购物车里，因为浏览器并不会无缘无故地删除这个 Cookie。<br>借此，就达到里记录用户操作历史的目的了。<br>（上面的例子只是为了让大家了解 Cookie 的作用而构想出来的，实际的网站使用 Cookie 时会更谨慎一些。）</li>
-</ol>
-<h2 id="cookie和localstorage-sessionStorge"><a href="#cookie和localstorage-sessionStorge" class="headerlink" title="cookie和localstorage,sessionStorge"></a>cookie和localstorage,sessionStorge</h2><p><img src="/2021/09/24/Cookie-Session-Token-localStorage/cookie.png" alt="cookie"></p>
-<h3 id="场景考虑"><a href="#场景考虑" class="headerlink" title="场景考虑"></a>场景考虑</h3><p>因为考虑到每个 HTTP 请求都会带着 Cookie 的信息，所以 Cookie 当然是能精简就精简啦，比较常用的一个应用场景就是判断用户是否登录。针对登录过的用户，服务器端会在他登录时往 Cookie 中插入一段加密过的唯一辨识单一用户的辨识码，下次只要读取这个值就可以判断当前用户是否登录啦。曾经还使用 Cookie 来保存用户在电商网站的购物车信息，如今有了 localStorage，似乎在这个方面也可以给 Cookie 放个假了~</p>
-<p>而另一方面 localStorage 接替了 Cookie 管理购物车的工作，同时也能胜任其他一些工作。比如HTML5游戏通常会产生一些本地数据，localStorage 也是非常适用的。如果遇到一些内容特别多的表单，为了优化用户体验，我们可能要把表单页面拆分成多个子页面，然后按步骤引导用户填写。这时候 sessionStorage 的作用就发挥出来了。</p>
-<p>需要注意的是，不是什么数据都适合放在 Cookie、localStorage 和 sessionStorage 中的。使用它们的时候，需要时刻注意是否有代码存在 XSS 注入的风险。因为只要打开控制台，你就随意修改它们的值，也就是说如果你的网站中有 XSS 的风险，它们就能对你的 localStorage 肆意妄为。所以千万不要用它们存储你系统中的敏感数据。</p>
-<h2 id="cookie和session，token"><a href="#cookie和session，token" class="headerlink" title="cookie和session，token"></a>cookie和session，token</h2><p><img src="/2021/09/24/Cookie-Session-Token-localStorage/1515111-20200405090920745-1422513552.png" alt="1"></p>
-<h3 id="cookie-session"><a href="#cookie-session" class="headerlink" title="cookie/session"></a>cookie/session</h3><p>HTTP 协议是一种无状态协议，即每次服务端接收到客户端的请求时，都是一个全新的请求，服务器并不知道客户端的历史请求记录；Session 和 Cookie 的主要目的就是为了弥补 HTTP 的无状态特性。</p>
-<p>Session 是什么<br>客户端请求服务端，服务端会为这次请求开辟一块内存空间，这个对象便是 Session 对象，存储结构为 ConcurrentHashMap。Session 弥补了 HTTP 无状态特性，服务器可以利用 Session 存储客户端在同一个会话期间的一些操作记录。</p>
-<p>Session 如何判断是否是同一会话<br>服务器第一次接收到请求时，开辟了一块 Session 空间（创建了Session对象），同时生成一个 sessionId ，并通过响应头的 **Set-Cookie：JSESSIONID=XXXXXXX **命令，向客户端发送要求设置 Cookie 的响应； 客户端收到响应后，在本机客户端设置了一个 **JSESSIONID=XXXXXXX **的 Cookie 信息，该 Cookie 的过期时间为浏览器会话结束<br><img src="/2021/09/24/Cookie-Session-Token-localStorage/2.png" alt="2"><br>接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie信息（包含 sessionId ）， 然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。</p>
-<p>Session 的缺点<br>Session 机制有个缺点，比如 A 服务器存储了 Session，就是做了负载均衡后，假如一段时间内 A 的访问量激增，会转发到 B 进行访问，但是 B 服务器并没有存储 A 的 Session，会导致 Session 的失效。</p>
-<p>而HTTP 协议中的 Cookie 包括 Web Cookie 和浏览器 Cookie，它是服务器发送到 Web 浏览器的一小块数据。服务器发送到浏览器的 Cookie，浏览器会进行存储，并与下一个请求一起发送到服务器。通常，它用于判断两个请求是否来自于同一个浏览器，例如用户保持登录状态。</p>
-<p>也就是说<br>由于http的无状态性，为了使某个域名下的所有网页能够共享某些数据，session和cookie出现了。客户端访问服务器的流程如下</p>
-<ol>
-<li>首先，客户端会发送一个http请求到服务器端。</li>
-<li>服务器端接受客户端请求后，建立一个session，并发送一个http响应到客户端，这个响应头，其中就包含Set-Cookie头部。该头部包含了sessionId。Set-Cookie格式如下，具体请看Cookie详解 Set-Cookie: value[; expires=date][; domain=domain][; path=path][; secure]</li>
-<li>在客户端发起的第二次请求，假如服务器给了set-Cookie，浏览器会自动在请求头中添加cookie</li>
-<li>服务器接收请求，分解cookie，验证信息，核对成功后返回response给客户端<br><img src="/2021/09/24/Cookie-Session-Token-localStorage/3.png" alt="3"></li>
-</ol>
-<p><strong>注意</strong><br>cookie只是实现session的其中一种方案。虽然是最常用的，但并不是唯一的方法。禁用cookie后还有其他方法存储，比如放在url中<br>现在大多都是Session + Cookie，但是只用session不用cookie，或是只用cookie，不用session在理论上都可以保持会话状态。可是实际中因为多种原因，一般不会单独使用<br>用session只需要在客户端保存一个id，实际上大量数据都是保存在服务端。如果全部用cookie，数据量大的时候客户端是没有那么多空间的。<br>如果只用cookie不用session，那么账户信息全部保存在客户端，一旦被劫持，全部信息都会泄露。并且客户端数据量变大，网络传输的数据量也会变大<br>简而言之, session 有如用户信息档案表, 里面包含了用户的认证信息和登录状态等信息. 而 cookie 就是用户通行证</p>
-<h3 id="token"><a href="#token" class="headerlink" title="token"></a>token</h3><p>token 也称作令牌，由uid+time+sign[+固定参数]<br>token 的认证方式类似于临时的证书签名, 并且是一种服务端无状态的认证方式, 非常适合于 REST API 的场景. 所谓无状态就是服务端并不会保存身份认证相关的数据。<br>组成</p>
-<ul>
-<li>uid: 用户唯一身份标识</li>
-<li>time: 当前时间的时间戳</li>
-<li>sign: 签名, 使用 hash/encrypt 压缩成定长的十六进制字符串，以防止第三方恶意拼接</li>
-<li>固定参数(可选): 将一些常用的固定参数加入到 token 中是为了避免重复查库</li>
-</ul>
-<p>token在客户端一般存放于localStorage，cookie，或sessionStorage中。在服务器一般存于数据库中</p>
-<p>token 的认证流程与cookie很相似</p>
-<ul>
-<li>用户登录，成功后服务器返回Token给客户端。</li>
-<li>客户端收到数据后保存在客户端</li>
-<li>客户端再次访问服务器，将token放入headers中</li>
-<li>服务器端采用filter过滤器校验。校验成功则返回请求数据，校验失败则返回错误码</li>
-</ul>
-<p><strong>token可以抵抗csrf，cookie+session不行</strong><br>假如用户正在登陆银行网页，同时登陆了攻击者的网页，并且银行网页未对csrf攻击进行防护。攻击者就可以在网页放一个表单，该表单提交src为<a href="http://www.bank.com/api/transfer%EF%BC%8Cbody%E4%B8%BAcount=1000&amp;to=Tom%E3%80%82%E5%80%98%E8%8B%A5%E6%98%AFsession+cookie%EF%BC%8C%E7%94%A8%E6%88%B7%E6%89%93%E5%BC%80%E7%BD%91%E9%A1%B5%E7%9A%84%E6%97%B6%E5%80%99%E5%B0%B1%E5%B7%B2%E7%BB%8F%E8%BD%AC%E7%BB%99Tom1000%E5%85%83%E4%BA%86.%E5%9B%A0%E4%B8%BAform">http://www.bank.com/api/transfer，body为count=1000&amp;to=Tom。倘若是session+cookie，用户打开网页的时候就已经转给Tom1000元了.因为form</a> 发起的 POST 请求并不受到浏览器同源策略的限制，因此可以任意地使用其他域的 Cookie 向其他域发送 POST 请求，形成 CSRF 攻击。在post请求的瞬间，cookie会被浏览器自动添加到请求头中。但token不同，token是开发者为了防范csrf而特别设计的令牌，浏览器不会自动添加到headers里，攻击者也无法访问用户的token，所以提交的表单无法通过服务器过滤，也就无法形成攻击。</p>
-<p>分布式情况下的session和token<br>我们已经知道session时有状态的，一般存于服务器内存或硬盘中，当服务器采用分布式或集群时，session就会面对负载均衡问题。</p>
-<ul>
-<li>负载均衡多服务器的情况，不好确认当前用户是否登录，因为多服务器不共享session。这个问题也可以将session存在一个服务器中来解决，但是就不能完全达到负载均衡的效果。当今的几种解决session负载均衡的方法。</li>
-</ul>
-<p>而token是无状态的，token字符串里就保存了所有的用户信息</p>
-<ul>
-<li>客户端登陆传递信息给服务端，服务端收到后把用户信息加密（token）传给客户端，客户端将token存放于localStroage等容器中。客户端每次访问都传递token，服务端解密token，就知道这个用户是谁了。通过cpu加解密，服务端就不需要存储session占用存储空间，就很好的解决负载均衡多服务器的问题了。这个方法叫做JWT(Json Web Token)<br>关于JWT可以看 （<a href="https://www.cnblogs.com/cxuanBlog/p/12635842.html%EF%BC%89">https://www.cnblogs.com/cxuanBlog/p/12635842.html）</a></li>
-</ul>
-<p>session存储于服务器，可以理解为一个状态列表，拥有一个唯一识别符号sessionId，通常存放于cookie中。服务器收到cookie后解析出sessionId，再去session列表中查找，才能找到相应session。依赖cookie<br>cookie类似一个令牌，装有sessionId，存储在客户端，浏览器通常会自动添加。<br>token也类似一个令牌，无状态，用户信息都被加密到token中，服务器收到token后解密就可知道是哪个用户。需要开发者手动添加。<br>jwt只是一个跨域认证的方案</p>
+<p>或者用双伪元素法 //用于清除外边距折叠的时候用 因为有了BFC</p>
+<pre><code>    .clearfix:before,clearfix:after&#123;
+        content: &#39;&#39;;
+        display: table;
+    &#125;
+
+    .clearfix:after&#123;
+        clear: both;
+    &#125;
+</code></pre>
+<h1 id="BFC"><a href="#BFC" class="headerlink" title="BFC"></a>BFC</h1><p>哎 上一章刚说的BFC，这一章就提到了，那就简单聊聊吧<br>BFC(块级格式化上下文 (Block Fromatting Context)) 书上的和网上搜的说的都有点怪，我的理解就是在网页中划分一个一个区域，或大或小，每个区域有着自己的内容，不会干涉到其他区域。以下方式会创建一个BFC</p>
+<pre><code>     float: left or float: right—anything but none
+     overflow: hidden, auto, or scroll—anything but visible
+     display: inline-block, table-cell, table-caption, flex, inline-flex,grid, or inline-grid—these are called block containers.
+     position: absolute or position: fixed
+</code></pre>
+<p><strong>Css也有框架，比如bootstrap啥的，也可以学学，</strong></p>
+<h1 id="网格系统"><a href="#网格系统" class="headerlink" title="网格系统"></a>网格系统</h1><p><a href="https://www.w3school.com.cn/css/css_grid.asp">网格系统</a></p>
 ]]></content>
       <categories>
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>网络知识</tag>
+        <tag>css</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Unit5-Flexbox</title>
+    <url>/2021/06/12/CssU5/</url>
+    <content><![CDATA[<p>Css in depth 第五章 flexbox 的学习笔记</p>
+<span id="more"></span>
+
+
+<h1 id="Flexbox-原则"><a href="#Flexbox-原则" class="headerlink" title="Flexbox 原则"></a>Flexbox 原则</h1><p>从display属性开始，当我们给一个元素添加display:flex后，该容器就会变成一个弹性容器，它的直接子元素就变成了弹性子元素，弹性子元素默认是在同一行按照从左到右的顺序并排排列。 弹性容器和块级容器一样自动填满可用的宽度，但弹性子元素不一定会填满容器的宽度弹性子元素高度相等，该高度由他们的内容决定。</p>
+<p>然后弹性容器里面有两个坐标轴，主轴为水平x(默认，从左到右)和副轴y(从上到下)，子元素就会默认沿主轴排列，并成等高列形式。</p>
+<h1 id="容器属性"><a href="#容器属性" class="headerlink" title="容器属性"></a>容器属性</h1><p>接下来就要看看flex布局的属性了，这部分是核心，了解他们才能熟练掌握flex布局，接下来先看看容器属性，也就是通过在弹性容器中设置属性来操纵弹性子元素</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. flex-direction: 设置主轴方向</span><br><span class="line">&#123;</span><br><span class="line">    row  //默认</span><br><span class="line">    row-reverse  //从右到左</span><br><span class="line">    column  //从上到下</span><br><span class="line">    column-reverse //从下到上</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">2. justify-content: 设置主轴上子元素排列方式</span><br><span class="line">&#123;</span><br><span class="line">    flex-start  //默认</span><br><span class="line">    flex-end  //从尾部开始</span><br><span class="line">    center  //居中对齐</span><br><span class="line">    space-around //平分剩余空间</span><br><span class="line">    space-between //先两边贴合 再平分剩余空间</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">3. flex-warp: 设置子元素是否换行</span><br><span class="line">&#123;</span><br><span class="line">    nowarp  //默认不换行</span><br><span class="line">    wrap  //换行</span><br><span class="line">    wrap-reverse  //换行，第一行往下</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">4. align-items: 设置侧轴子元素排列方式 (单行)</span><br><span class="line">&#123;</span><br><span class="line">    flex //侧轴默认方向</span><br><span class="line">    flex-end  //默认反向</span><br><span class="line">    center  //居中</span><br><span class="line">    stretch  //拉伸(默认)</span><br><span class="line">    baseline  //取内容第一行文字基线对齐</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">5. align-content: 设置侧轴子元素排列方式(多行)</span><br><span class="line">&#123;</span><br><span class="line">    其他属性和单行相同，多了space-around 和 space-bettwen</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">6. flex-flow 同时设置 flex-direction 和 flex-warp </span><br></pre></td></tr></table></figure>
+
+<h1 id="item-属性"><a href="#item-属性" class="headerlink" title="item 属性"></a>item 属性</h1><p>接下来再看看子相属性</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">order 定义项目排列顺序 数值越小 排列越靠前</span><br><span class="line">flex-basis 定义了该item(弹性子元素)尺寸的基准值，默认是auto，即项目由本身内容决定的尺寸，该值可以是任意width单位值，</span><br><span class="line">flex-grow  每个item的增长比例，即用于平分剩余空间时所占的比例</span><br><span class="line">flex-shrink  每个item的缩小比例 即内容溢出后所占的缩小比例</span><br><span class="line">flex： flex-gorw，flex-shrink，flex-basis 的合写</span><br><span class="line">align-self 用于设置单个item的对齐方式，可以覆盖align-items 值与其相等</span><br></pre></td></tr></table></figure>
+
+<p>Okey Flex到此为止咯</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>css</tag>
       </tags>
   </entry>
   <entry>
@@ -322,116 +380,6 @@
       </categories>
       <tags>
         <tag>react</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Unit4-理解浮动</title>
-    <url>/2021/06/12/CssU4/</url>
-    <content><![CDATA[<p>Css in depth 第四章笔记</p>
-<span id="more"></span>
-
-
-<h1 id="什么是浮动"><a href="#什么是浮动" class="headerlink" title="什么是浮动"></a>什么是浮动</h1><p>就飘起来浮上去呗，在普通文档流中一个块级元素就是占据一行的，添加浮动后下面的元素就都跑到一行来了，满了塞不下了就换行，这就是浮动(我这解释有点破哈)，<br>并且浮动的元素具有行内块元素的特征，并不会保留原先的位置。<br>块级元素的宽=宽度默认情况下和父元素一致，而添加浮动后它的尺寸就根据内容决定了。<br>而设计浮动的初衷其实是为了实现这种效果</p>
-<p><img src="/2021/06/12/CssU4/1.png" alt="1"></p>
-<p>实现文字包围图片，跟报纸那样的。虽然现在浮动用的不多，很多东西都能代替浮动，比如flex布局，但还是很有必要学习浮动的，因为想要实现把图片移动到浏览器的一侧，或者文字围绕图片，浮动仍然是唯一的选择</p>
-<h1 id="清除浮动"><a href="#清除浮动" class="headerlink" title="清除浮动"></a>清除浮动</h1><h2 id="为什么要清除浮动"><a href="#为什么要清除浮动" class="headerlink" title="为什么要清除浮动"></a>为什么要清除浮动</h2><p>父元素容器很多情况下不方便给定高度，子元素添加浮动后又释放了原本的位置，那么父容器就成了一个高度为0且没有内容的容器，会影响下面普通文档流的其他元素，所以就需要清除该浮动带来的副作用。</p>
-<p>如果父元素本身有高度则不需要清除浮动，同样，清除浮动后父元素会根据子元素的内容来改变自身的高度，就不会影响后面的标准流(普通文档流)的元素来</p>
-<h2 id="清除浮动的方法"><a href="#清除浮动的方法" class="headerlink" title="清除浮动的方法"></a>清除浮动的方法</h2><ol>
-<li><p>额外标签法(w3c推荐做法)<br>在浮动的元素后面添加一个 <code>&lt;div class=&#39;clear&#39;&gt;</code>,并写上</p>
-<pre><code> .clear&#123;
-     clear:both;
- &#125;
-</code></pre>
-</li>
-<li><p>给父元素容器添加overflow属性(不是默认值就行)</p>
-</li>
-<li><p>伪元素法 类似于额外标签法，不过是用伪元素实现，假设父元素容器class=’clearfix’</p>
-<pre><code> .clearfix:after&#123;
-     content: &#39;&#39;;
-     display: block;
-     height: 0;
-     clear: both;
-     visibility: hidden;
- &#125;
-</code></pre>
-</li>
-</ol>
-<p>或者用双伪元素法 //用于清除外边距折叠的时候用 因为有了BFC</p>
-<pre><code>    .clearfix:before,clearfix:after&#123;
-        content: &#39;&#39;;
-        display: table;
-    &#125;
-
-    .clearfix:after&#123;
-        clear: both;
-    &#125;
-</code></pre>
-<h1 id="BFC"><a href="#BFC" class="headerlink" title="BFC"></a>BFC</h1><p>哎 上一章刚说的BFC，这一章就提到了，那就简单聊聊吧<br>BFC(块级格式化上下文 (Block Fromatting Context)) 书上的和网上搜的说的都有点怪，我的理解就是在网页中划分一个一个区域，或大或小，每个区域有着自己的内容，不会干涉到其他区域。以下方式会创建一个BFC</p>
-<pre><code>     float: left or float: right—anything but none
-     overflow: hidden, auto, or scroll—anything but visible
-     display: inline-block, table-cell, table-caption, flex, inline-flex,grid, or inline-grid—these are called block containers.
-     position: absolute or position: fixed
-</code></pre>
-<p><strong>Css也有框架，比如bootstrap啥的，也可以学学，</strong></p>
-<h1 id="网格系统"><a href="#网格系统" class="headerlink" title="网格系统"></a>网格系统</h1><p><a href="https://www.w3school.com.cn/css/css_grid.asp">网格系统</a></p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>css</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Regexp</title>
-    <url>/2021/06/09/Regexp/</url>
-    <content><![CDATA[<p>正则表达式就是用于定义某种规则，计算机可以通过该规则检测一个字符串是否符合该规则<br>或者将该字符串中符合正则表达式的内容提取出来</p>
-<span id="more"></span>
-
-<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><h2 id="创建一个正则表达式"><a href="#创建一个正则表达式" class="headerlink" title="创建一个正则表达式"></a>创建一个正则表达式</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Regexp构造函数</span></span><br><span class="line"><span class="keyword">let</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">&#x27;正则表达式&#x27;</span>,<span class="string">&#x27;匹配模式&#x27;</span>) <span class="comment">//是一个对象 更简单</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 字面量</span></span><br><span class="line"><span class="keyword">let</span> reg = <span class="regexp">/a/i</span>; <span class="comment">//更灵活</span></span><br></pre></td></tr></table></figure>
-<p>每个正则表达式就是一个RegExp实例对象，有着自己的属性，包括source，lastIndex等，这些属性可以全面了解正则表达式等信息，但实际用得不多。</p>
-<p>在正则表达式中，不属于特殊字符代码的(如\n)的反斜杠会被保留，不像在一般字符串中被忽略，并且问号和加号等特殊字符在正则表达式中具有特殊含义，若要表示该字符本身，前面也要加\说明，如/+/。<br>匹配模式有i g m等，主要用: i忽略大小写 g开启全局匹配。</p>
-<p>有一个test方法可以检测某字符串是否符合正则表达式,只要含有正则表达式中的的字符串就回返回true。<br>而exec()方法可以返回一个包含匹配信息的数组对象，该数组对象中有index(字符串中匹配模式的其实位置)和input(查找的字符串)两个属性，如果没有匹配到就返回一个null，如果不开启g，则每次调用该方法就回返回第一个匹配项，开启后则回往后搜寻下一个匹配项，并改变lastIndex属性的值(默认一直为0)。当正则表达式含有括号分组的字表达后，调用该方法后的数组对象第一个元素还是整体匹配的部分，但接下来的元素是由那些括号组所匹配的部分</p>
-<h2 id="字符集"><a href="#字符集" class="headerlink" title="字符集"></a>字符集</h2><p>｜表示或的意思 a|b  []里面也表示｜的关系  /[a-z]/表示任意的小写字母 /[A-z]/任意字母<br>/[^a]/表示不包含a 除了a。<br>字符集也有一些内置的快捷方式。</p>
-<pre><code>    \d  任何数字字符
-    \w  字母数字字符
-    \s  任何空白符字符
-    \D  非数字字符
-    \W  非字母数字字符
-    \S  非空白符字符
-    \b  匹配单词边界 (所谓单词就是隶属于\w下的字串)
-    \B  匹配非单词边界
-    .  除换行符以外的所有字符
-</code></pre>
-<p>对于要匹配重复的部分 则有以下方法，如：</p>
-<pre><code>    /+/ 匹配一个或多个字符
-    /*/ 与加号类似，但允许匹配0次
-    /?/ 令某一部分可选，即可能出现一次或者零次
-
-    //若要表示精确次数，就用&#123;&#125;，如
-
-    &#123;2&#125; 表示出现两次
-    &#123;2,4&#125; 表示出现2-4次
-    &#123;2,&#125; 表示出现两次即以上
-</code></pre>
-<p><strong>记得若要重复多个元素时，要用括号，例如 <code>/(abc)+/</code></strong></p>
-<pre><code>    /^a/ 表示必须以a开头
-    /a$/ 表示必须以a结尾
-</code></pre>
-<p>所以/^a$/表示所匹配的字符串中有且只有a</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">`Lis, Bar</span></span><br><span class="line"><span class="string">Mc, John</span></span><br><span class="line"><span class="string">Wad, Phio`</span>.replace(<span class="regexp">/(\w+), (\w+)/g</span>, <span class="string">&#x27;$2 $1&#x27;</span>));</span><br><span class="line"><span class="comment">// $1 和 $2 是模式中带括号的组。 整个匹配可以用 $&amp;来表示。</span></span><br><span class="line"><span class="comment">// 上述代码是 $1 指向 Lis / Mc / Wad ，$2 指向 Bar / John / phio ,然后$2 指向的匹配代替了$1匹配原有的位置</span></span><br></pre></td></tr></table></figure>
-
-<p>字符串加正则<br>search 检索与正则表达式匹配的值 类似于indexof()方法 返回索引，搜不到就返回-1，接收正则表达式为参数<br>match   找到一个或多个正则的匹配  默认情况下之检索一个，开启全局匹配后则可以匹配多个， 把匹配到的内容封装成一个数组返回<br>replace 替换与正则表达式匹配的字串 两个参数，第一个是正则表达式，第二个是替换内容<br>split   把字符串拆分成数组</p>
-<h2 id="匹配机制"><a href="#匹配机制" class="headerlink" title="匹配机制"></a>匹配机制</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> animalCount = <span class="regexp">/\b\d+ (pig|cow|chicken)s?\b/</span></span><br><span class="line"><span class="built_in">console</span>.log(animalCount.tesr(<span class="string">&quot;15 pigs&quot;</span>)) <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2021/06/09/Regexp/9-1.svg" alt="01"></p>
-<p>回溯:<br>正则表达式/\b([01]+b|\d+|[\da-f]h)\b/可以匹配三种字符串：以b结尾的二进制数字，以h结尾的十六进制数字（即以 16 为进制，字母a到f表示数字 10 到 15），或者没有后缀字符的常规十进制数字。这是对应的图表。<br><img src="/2021/06/09/Regexp/9-2.svg" alt="02"></p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>js</tag>
       </tags>
   </entry>
   <entry>
@@ -535,21 +483,78 @@
       </tags>
   </entry>
   <entry>
-    <title>antd的基本使用</title>
-    <url>/2021/05/12/antd%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h1 id="引入组件"><a href="#引入组件" class="headerlink" title="引入组件"></a>引入组件</h1><p>先引入antd库嘛<br><code>yarn add antd</code></p>
-<p>然后想用什么组件就去官网找相应代码，比如有一个Button按钮想引入，就直接import导入<br><code>import &#123;Button&#125; from &#39;antd&#39;</code><br>在你想要的合适的位置直接放进去就行<br><code>&lt;Button type=&quot;primary&quot;&gt;Primary Button&lt;/Button&gt;</code></p>
+    <title>Flux与Redux</title>
+    <url>/2021/09/19/Flux%E4%B8%8ERedux/</url>
+    <content><![CDATA[<p>基于React的比较重要的思想和库，这里也简单的写个博客记录一下学习过程</p>
 <span id="more"></span>
-<p>用的比较多的是图标哈，就需要有另一个库<br><code>yarn add @ant-design/icons</code><br>想要啥就import导入然后写下来就行</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; WechatOutlined, WeiboOutlined&#125; <span class="keyword">from</span> <span class="string">&#x27;@ant-design/icons&#x27;</span></span><br><span class="line"></span><br><span class="line">&lt;WechatOutlined /&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">WeiboOutlined</span> /&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p>还有轮播图啥的巴拉巴拉，自己去看官方文档就好了。</p>
-<h1 id="按需引入和自定义内容"><a href="#按需引入和自定义内容" class="headerlink" title="按需引入和自定义内容"></a>按需引入和自定义内容</h1><p>这个好好看官方文档吧，3版本和4版本的不一样，暂时还没弄懂。。。。</p>
+
+<p>Flux架构说到底就是一种思想，就比如说我们写一个组件的时候，就很容易在一个组件内又写请求数据的函数又把这些数据展示出来，就会让一个组件显得很长很长，但其实业务逻辑不需要关心数据从哪里来，只需要定义好传入的接口就行了，数据应该抽象到其他地方去做，比如把数据抽象到父组件中去。这样就完成了数据请求和业务逻辑的分开。我们称只有数据请求的组件叫<strong>容器型组件</strong>，而只有业务逻辑没有数据请求的组件叫<strong>展示型组件</strong>。这样抽象后的代码是具有更多的可读性和可维护性，但是！！！！这不是最佳的办法，因为请求数据这部分还是写在了组件当中，数据与逻辑解耦才是我们真正想要的！这是，Flux架构就来了。</p>
+<h1 id="Flux架构"><a href="#Flux架构" class="headerlink" title="Flux架构"></a>Flux架构</h1><p>Flux可以说是MVC模式的一种变体，更为清晰和简单，对于MVC可以自行搜索了解。Flux的核心思想就是<strong>数据和逻辑永久单向流动</strong>我们看一下他的流程图<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/flux.png" alt="flux"><br>详细点就是<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/flux2.png" alt="flux"><br>简单的用语言说就是：</p>
+<ol>
+<li>用户访问 View</li>
+<li>View 发出用户的 Action</li>
+<li>Dispatcher 收到 Action，要求 Store 进行相应的更新</li>
+<li>Store 更新后，发出一个”change”事件</li>
+<li>View 收到”change”事件后，更新页面</li>
+</ol>
+<h1 id="Redux"><a href="#Redux" class="headerlink" title="Redux"></a>Redux</h1><p>简单的了解了Flux后，我们就看看Redux，Redux就是基于Flux架构实现的一个react库，用于集中式管理状态，我们先看看他的原理图<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/redux.png" alt="redux"></p>
+<ul>
+<li>这个原理图就是，比如我们在UI界面端点击了一个按钮，要把这个按钮从白色变成红色，在我们点击后会触发点击时间，调用了store.dispath()方法把一个action传给store，然后store就会再帮我们调用reducer函数。reducer是个纯函数，他会根据action修改相应的状态并返回给store，然后store更新状态，我们button的颜色就会相应更改了(store.getState())</li>
+</ul>
+<p>我们用形象点的语言来解释一下</p>
+<ul>
+<li>我们是顾客，去一个饭店吃饭，ReactComponents就是菜单，是我们能看到的UI图，然后我们点菜，就会告诉店小二我们要吃啥，这个店小二就是ActionCreators，店小二就会拿着我们的想要的食物(action)去告诉(dispatch)老板，老板就是store，然后老板再把这个消息告诉后厨(Reducers)，后厨知道我们要吃啥了，就刷刷刷加工给我们上食材(返回新状态)。</li>
+</ul>
+<p>重点API</p>
+<ol>
+<li>store.getState() 获取状态</li>
+<li>store.dispatch() 更改状态</li>
+<li>store.subscribe() 监听状态的改变</li>
+</ol>
+<p><strong>注意中间件的使用！并且中间件一般是是在dispatch里生效的</strong></p>
+<h1 id="react-redux"><a href="#react-redux" class="headerlink" title="react-redux"></a>react-redux</h1><p>就是 Facebook团队基于redux的影响出了一个可以更好的使用redux的一个库。<br>重点有如下API</p>
+<ul>
+<li>connect()</li>
+<li>&lt;Provider/&gt;组件</li>
+</ul>
+<p>先看看react-redux的模型图<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/react-redux.png" alt="react-redux"><br>react-redux中把一个组件拆开，分成UI组件和容器组件(更贴合于Flux架构)，然后UI组件不接受任何业务逻辑，就类似与纯函数，他就像一个“纯组件”，只通过接受过来的props参数来改变渲染结果，然后Count组件就负责承担业务逻辑和与redux沟通，并把store中的state以及更改state的方法(dispatch)分发给UI组件，而connect()方法就是起这个作用的。</p>
+<h2 id="connect"><a href="#connect" class="headerlink" title="connect()"></a>connect()</h2><p><code>const Container = connect(mapStateToProp,mapDispatchToProps)(UI)</code><br>这样Container就是一个被加工的容器组件，这传代码的意思是，connect方法接受两个参数：mapStateToProps和mapDispatchToProps。它们定义了 UI 组件的业务逻辑。前者负责输入逻辑，即将state映射到 UI 组件的参数（props），后者负责输出逻辑，即将用户对 UI 组件的操作映射成 Action。<br>从本质上说connect可以看作是一个高阶函数</p>
+<p>mapStateToProps</p>
+<ol>
+<li>mapStateToProps函数返回的是一个对象；</li>
+<li>返回的对象中的key就作为传递给UI组件props的key,value就作为传递给UI组件props的value</li>
+<li>mapStateToProps用于传递状态</li>
+</ol>
+<p>mapDispatchToProps</p>
+<ol>
+<li>mapDispatchToProps函数返回的是一个对象；</li>
+<li>返回的对象中的key就作为传递给UI组件props的key,value就作为传递给UI组件props的value</li>
+<li>mapDispatchToProps用于传递操作状态的方法</li>
+</ol>
+<h2 id="lt-Provider-gt"><a href="#lt-Provider-gt" class="headerlink" title="&lt;Provider/&gt;"></a>&lt;Provider/&gt;</h2><p>Provider组件就是基于react中的Context实现的，connect方法生成容器组件以后，需要让容器组件拿到state对象，才能生成 UI 组件的参数。这里用Provider就可以直接让容器组件拿到了。具体源码实现这里就不放了。</p>
+<h1 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h1><p>就看看redux在生产环境中是如何使用的吧,我们做出这样一个效果<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/ui.png" alt="ui"><br>上方Count组件可以拿到下方Person组件的人数，然后Person组件也可以取到上方Count组件的求和数，先看项目文件<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/code.png" alt="code"></p>
+<h2 id="action"><a href="#action" class="headerlink" title="action"></a>action</h2><p>除了redux文件夹里面的东西要讲一讲外其他的都没啥必要了。那就按顺序，我们分析需求，要用到redux，就先把这些文件夹建起来，该装的依赖装好，然后分需求，看看有什么，Count组件要计算， Person组件要添加人数，然后根据这些需求去写action</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// constant.js 文件</span></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该模块是用于定义action对象中type类型的常量值，目的只有一个：便于管理的同时防止程序员单词写错</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> INCREMENT = <span class="string">&#x27;increment&#x27;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> DECREMENT = <span class="string">&#x27;decrement&#x27;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> ADD_PERSON = <span class="string">&#x27;add_person&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该文件专门为Count组件生成action对象</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> &#123;INCREMENT,DECREMENT&#125; <span class="keyword">from</span> <span class="string">&#x27;../constant&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//同步action，就是指action的值为Object类型的一般对象</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> increment = <span class="function"><span class="params">data</span> =&gt;</span> (&#123;<span class="attr">type</span>:INCREMENT,data&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> decrement = <span class="function"><span class="params">data</span> =&gt;</span> (&#123;<span class="attr">type</span>:DECREMENT,data&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//异步action，就是指action的值为函数,异步action中一般都会调用同步action，异步action不是必须要用的。</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> incrementAsync = <span class="function">(<span class="params">data,time</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function">(<span class="params">dispatch</span>)=&gt;</span>&#123;</span><br><span class="line">		<span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">			dispatch(increment(data))</span><br><span class="line">		&#125;,time)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  Person组件生成action对象</span></span><br><span class="line"><span class="keyword">import</span> &#123; ADD_PERSON &#125; <span class="keyword">from</span> <span class="string">&quot;../constant&quot;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> addPerson = <span class="function"><span class="params">personObj</span> =&gt;</span> (&#123;<span class="attr">type</span>:ADD_PERSON,<span class="attr">data</span>:personObj&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>然后就根据action写reducer</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	1.该文件是用于创建一个为Count组件服务的reducer，reducer的本质就是一个函数</span></span><br><span class="line"><span class="comment">	2.reducer函数会接到两个参数，分别为：之前的状态(preState)，动作对象(action)</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initState = <span class="number">0</span> <span class="comment">//初始化状态</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">countReducer</span>(<span class="params">preState=initState,action</span>)</span>&#123;</span><br><span class="line">	<span class="comment">//从action对象中获取：type、data</span></span><br><span class="line">	<span class="keyword">const</span> &#123;type,data&#125; = action</span><br><span class="line">	<span class="comment">//根据type决定如何加工数据</span></span><br><span class="line">	<span class="keyword">switch</span> (type) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;increment&#x27;</span>: <span class="comment">//如果是加</span></span><br><span class="line">			<span class="keyword">return</span> preState + data</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;decrement&#x27;</span>: <span class="comment">//若果是减</span></span><br><span class="line">			<span class="keyword">return</span> preState - data</span><br><span class="line">		<span class="attr">default</span>:</span><br><span class="line">			<span class="keyword">return</span> preState</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Person</span></span><br><span class="line"><span class="keyword">import</span> &#123;ADD_PERSON&#125; <span class="keyword">from</span> <span class="string">&#x27;../constant&#x27;</span></span><br><span class="line"><span class="comment">//初始化人的列表</span></span><br><span class="line"><span class="keyword">const</span> initState = [&#123;<span class="attr">id</span>:<span class="string">&#x27;001&#x27;</span>,<span class="attr">name</span>:<span class="string">&#x27;tom&#x27;</span>,<span class="attr">age</span>:<span class="number">18</span>&#125;]</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">personReducer</span>(<span class="params">preState=initState,action</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">const</span> &#123;type,data&#125; = action</span><br><span class="line">	<span class="keyword">switch</span> (type) &#123;</span><br><span class="line">		<span class="keyword">case</span> ADD_PERSON: <span class="comment">//若是添加一个人</span></span><br><span class="line">			<span class="keyword">return</span> [data,...preState]</span><br><span class="line">		<span class="attr">default</span>:</span><br><span class="line">			<span class="keyword">return</span> preState</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后联合reducer</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该文件用于汇总所有的reducer为一个总的reducer</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//引入combineReducers，用于汇总多个reducer</span></span><br><span class="line"><span class="keyword">import</span> &#123;combineReducers&#125; <span class="keyword">from</span> <span class="string">&#x27;redux&#x27;</span></span><br><span class="line"><span class="comment">//引入为Count组件服务的reducer</span></span><br><span class="line"><span class="keyword">import</span> count <span class="keyword">from</span> <span class="string">&#x27;./count&#x27;</span></span><br><span class="line"><span class="comment">//引入为Person组件服务的reducer</span></span><br><span class="line"><span class="keyword">import</span> persons <span class="keyword">from</span> <span class="string">&#x27;./person&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//汇总所有的reducer变为一个总的reducer</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span>  combineReducers(&#123;</span><br><span class="line">	count,</span><br><span class="line">	persons</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>然后创建store</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该文件专门用于暴露一个store对象，整个应用只有一个store对象</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//引入createStore，专门用于创建redux中最为核心的store对象</span></span><br><span class="line"><span class="keyword">import</span> &#123;createStore,applyMiddleware&#125; <span class="keyword">from</span> <span class="string">&#x27;redux&#x27;</span></span><br><span class="line"><span class="comment">//引入汇总之后的reducer</span></span><br><span class="line"><span class="keyword">import</span> reducer <span class="keyword">from</span> <span class="string">&#x27;./reducers&#x27;</span></span><br><span class="line"><span class="comment">//引入redux-thunk，用于支持异步action</span></span><br><span class="line"><span class="keyword">import</span> thunk <span class="keyword">from</span> <span class="string">&#x27;redux-thunk&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//暴露store </span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> createStore(reducer,applyMiddleware(thunk))</span><br></pre></td></tr></table></figure>
+
+<p>至此，关于redux的文件就弄好了，接下来就去弄容器组件，Count组件要的state是Count和跟Person人数，Action是数字的运算，则有</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"> <span class="keyword">export</span> <span class="keyword">default</span> connect(</span><br><span class="line">	<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">		<span class="attr">count</span>:state.count,</span><br><span class="line">		<span class="attr">personCount</span>:state.persons.length</span><br><span class="line">	&#125;),</span><br><span class="line">	&#123;increment,decrement,incrementAsync&#125;</span><br><span class="line">)(CountUI)</span><br></pre></td></tr></table></figure>
+<p>Person类似</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"> <span class="keyword">export</span> <span class="keyword">default</span> connect(</span><br><span class="line">	<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">		<span class="attr">count</span>:state.count,</span><br><span class="line">		<span class="attr">personCount</span>:state.persons.length</span><br><span class="line">	&#125;),</span><br><span class="line">	&#123;increment,decrement,incrementAsync&#125;</span><br><span class="line">)(CountUI)</span><br></pre></td></tr></table></figure>
+<p>至此，对于react的基本介绍就到这里了。</p>
 ]]></content>
       <categories>
-        <category>daily</category>
+        <category>笔记</category>
       </categories>
       <tags>
-        <tag>project</tag>
+        <tag>react</tag>
       </tags>
   </entry>
   <entry>
@@ -608,42 +613,6 @@
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;withRouter&#125; <span class="keyword">from</span> <span class="string">&#x27;react-dom-router&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 某组件Demo</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> withRouter(Demo)</span><br></pre></td></tr></table></figure>
 <p>这样Demo组件就变成了一个新组件，不同于一般组件和路由组件</p>
 <h2 id="BrowserRouter与HashRouter的区别"><a href="#BrowserRouter与HashRouter的区别" class="headerlink" title="BrowserRouter与HashRouter的区别"></a>BrowserRouter与HashRouter的区别</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1.底层原理不一样：</span><br><span class="line"></span><br><span class="line">		BrowserRouter使用的是H5的history API，不兼容IE9及以下版本。</span><br><span class="line">		HashRouter使用的是URL的哈希值。</span><br><span class="line"></span><br><span class="line">2.path表现形式不一样</span><br><span class="line"></span><br><span class="line">	    BrowserRouter的路径中没有#,例如：localhost:3000/demo/test</span><br><span class="line">		HashRouter的路径包含#,例如：localhost:3000/#/demo/test</span><br><span class="line"></span><br><span class="line">3.刷新后对路由state参数的影响</span><br><span class="line">		(1).BrowserRouter没有任何影响，因为state保存在history对象中。</span><br><span class="line">		(2).HashRouter刷新后会导致路由state参数的丢失！！！</span><br><span class="line">			</span><br><span class="line">4.备注：HashRouter可以用于解决一些路径错误相关的问题。</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>react</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>HOC | render props | hook</title>
-    <url>/2021/09/14/HOC-render-props-hook/</url>
-    <content><![CDATA[<p>react的中 对于一些复用的节点，我们可以抽成一个组件，而对于一些复用的逻辑，我们也可以抽象化这个逻辑来优化代码，主要有三种方法，HOC，render props，和自定义hook</p>
-<span id="more"></span>
-
-<h1 id="HOC"><a href="#HOC" class="headerlink" title="HOC"></a>HOC</h1><p>HOC 就是高阶组件吗，之前有博客介绍了的，虽然写的有点烂但我这里就不赘述了，这里用一个计数器的demo，直接上高阶组件实现计数器的代码</p>
-<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;View, Text,Button&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Count</span>(<span class="params">&#123;count,add,minus&#125;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;&#123;flex:1,alignItems:</span>&#x27;<span class="attr">center</span>&#x27;,<span class="attr">justifyContent:</span>&#x27;<span class="attr">center</span>&#x27;&#125;&#125;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Text</span>&gt;</span>You clicked &#123;count&#125; times<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;add&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">add</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;minus&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">minus</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;changeTheme&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">ChangeTheme</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> countNumber=<span class="function">(<span class="params">initNumber</span>)=&gt;</span> <span class="function">(<span class="params">WrappedComponent</span>)=&gt;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CountNumber</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">        state = &#123;<span class="attr">count</span>: initNumber&#125;;</span><br><span class="line">        add = <span class="function">() =&gt;</span> <span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span>&#125;);</span><br><span class="line">        minus = <span class="function">() =&gt;</span> <span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>: <span class="built_in">this</span>.state.count - <span class="number">1</span>&#125;);</span><br><span class="line">        <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                &#123;<span class="attr">...this.props</span>&#125;</span></span></span><br><span class="line"><span class="tag"><span class="xml">                <span class="attr">count</span>=<span class="string">&#123;this.state.count&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                <span class="attr">add</span>=<span class="string">&#123;this.add.bind(this)&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                <span class="attr">minus</span>=<span class="string">&#123;this.minus.bind(this)&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">            /&gt;</span></span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> countNumber(<span class="number">0</span>)(Count);</span><br></pre></td></tr></table></figure>
-<p>优点:<br>可以看到，高阶组件是把逻辑和UI分开了，Count组件指负责渲染UI，被传入HOC中才有了计数的逻辑，这很好的维护了内层组件的状态，降低了耦合度<br>缺点:</p>
-<ol>
-<li>注意一下HOC的state是写死的，也就是说传入给Count组件的prop是写死的，这就有可能产生命名冲突，覆盖掉Count组件原有的props</li>
-<li>HOC是链式调用，会导致错误难以定位</li>
-</ol>
-<h1 id="render-props"><a href="#render-props" class="headerlink" title="render props"></a>render props</h1><p>先直接上代码</p>
-<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;View, Text,Button&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">RenderProps</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;&#123;flex:1,alignItems:</span>&#x27;<span class="attr">center</span>&#x27;,<span class="attr">justifyContent:</span>&#x27;<span class="attr">center</span>&#x27;&#125;&#125;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">CountNumber</span> <span class="attr">initNumber</span>=<span class="string">&#123;0&#125;</span> <span class="attr">render</span>=<span class="string">&#123;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    (&#123;<span class="attr">count</span>,<span class="attr">add</span>,<span class="attr">minus</span>&#125;)=&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Text</span>&gt;</span>You clicked &#123;count&#125; times<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;add&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">add</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;minus&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">minus</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;changeTheme&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">ChangeTheme</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;/&gt;</span></span></span><br><span class="line"><span class="xml">                &#125;&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">CountNumber</span>&gt;</span></span></span><br><span class="line">        &lt;/View&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CountNumber</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span></span>&#123;</span><br><span class="line">    state=&#123;<span class="attr">count</span>:<span class="built_in">this</span>.props.initNumber&#125;;</span><br><span class="line">    add=<span class="function">()=&gt;</span><span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>:<span class="built_in">this</span>.state.count+<span class="number">1</span>&#125;);</span><br><span class="line">    minus=<span class="function">()=&gt;</span><span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>:<span class="built_in">this</span>.state.count-<span class="number">1</span>&#125;);</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.props.render(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count,</span><br><span class="line">            <span class="attr">add</span>: <span class="built_in">this</span>.add,</span><br><span class="line">            <span class="attr">minus</span>:<span class="built_in">this</span>.minus</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样也实现了逻辑复用，还留下了一个“插槽”，也就是预留位置，缺点就是不能在return语句外访问数据，同时用的过多的话会跟HOC差不多，HOC是过长的链式调用形成异常栈，而render props则会形成潜逃地狱</p>
-<h1 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h1><p>最后看一看最新的自定义hook</p>
-<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123;useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;View, Text,Button&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">HookCount</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count,addCount,minusCount] = useCountNumber(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;&#123;backgroundColor:theme,flex:1,alignItems:</span>&#x27;<span class="attr">center</span>&#x27;,<span class="attr">justifyContent:</span>&#x27;<span class="attr">center</span>&#x27;&#125;&#125;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Text</span>&gt;</span>You clicked &#123;count&#125; times<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;addCount&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">add</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;minusCount&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">minus</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;changeTheme&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">ChangeTheme</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">useCountNumber</span>(<span class="params">initNumber</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count, setCount] = useState(initNumber);</span><br><span class="line">    <span class="keyword">const</span> addCount=<span class="function">()=&gt;</span> setCount(count + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">const</span> minusCount=<span class="function">()=&gt;</span>setCount(count -<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        count,</span><br><span class="line">        addCount,</span><br><span class="line">        minusCount</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>反正 hook作为最新的语法，最好还是多用他，但也不能完全代替</p>
-<ul>
-<li>Hooks：<ul>
-<li>替代 Class 的大部分用例，除了 getSnapshotBeforeUpdate 和 componentDidCatch 还不支持。</li>
-<li>提取复用逻辑。除了有明确父子关系的，其他场景都可以使用 Hooks。</li>
-</ul>
-</li>
-<li>Render Props：在组件渲染上拥有更高的自由度，可以根据父组件提供的数据进行动态渲染。适合有明确父子关系的场景。</li>
-<li>高阶组件：适合用来做注入，并且生成一个新的可复用组件。适合用来写插件。</li>
-</ul>
-]]></content>
       <categories>
         <category>笔记</category>
       </categories>
@@ -736,6 +705,7 @@
 <p>好嘞，接下来我们就看这篇博客的真正的主角——umiJs！！</p>
 <p>。。为什么到现在才开始真正的主角，我觉得是不是有点长有点久了。。。</p>
 <h1 id="UmiJs"><a href="#UmiJs" class="headerlink" title="UmiJs"></a>UmiJs</h1><p>那么那么那么，什么是umiJs呢</p>
+<p>官方介绍Umi，中文可发音为乌米<strong>，是可扩展的企业级前端应用框架。Umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。然后配以生命周期完善的插件体系，覆盖从源码到构建产物的每个生命周期，支持各种功能扩展和业务需求。</strong></p>
 ]]></content>
       <categories>
         <category>笔记</category>
@@ -745,78 +715,186 @@
       </tags>
   </entry>
   <entry>
-    <title>Flux与Redux</title>
-    <url>/2021/09/19/Flux%E4%B8%8ERedux/</url>
-    <content><![CDATA[<p>基于React的比较重要的思想和库，这里也简单的写个博客记录一下学习过程</p>
+    <title>HOC | render props | hook</title>
+    <url>/2021/09/14/HOC-render-props-hook/</url>
+    <content><![CDATA[<p>react的中 对于一些复用的节点，我们可以抽成一个组件，而对于一些复用的逻辑，我们也可以抽象化这个逻辑来优化代码，主要有三种方法，HOC，render props，和自定义hook</p>
 <span id="more"></span>
 
-<p>Flux架构说到底就是一种思想，就比如说我们写一个组件的时候，就很容易在一个组件内又写请求数据的函数又把这些数据展示出来，就会让一个组件显得很长很长，但其实业务逻辑不需要关心数据从哪里来，只需要定义好传入的接口就行了，数据应该抽象到其他地方去做，比如把数据抽象到父组件中去。这样就完成了数据请求和业务逻辑的分开。我们称只有数据请求的组件叫<strong>容器型组件</strong>，而只有业务逻辑没有数据请求的组件叫<strong>展示型组件</strong>。这样抽象后的代码是具有更多的可读性和可维护性，但是！！！！这不是最佳的办法，因为请求数据这部分还是写在了组件当中，数据与逻辑解耦才是我们真正想要的！这是，Flux架构就来了。</p>
-<h1 id="Flux架构"><a href="#Flux架构" class="headerlink" title="Flux架构"></a>Flux架构</h1><p>Flux可以说是MVC模式的一种变体，更为清晰和简单，对于MVC可以自行搜索了解。Flux的核心思想就是<strong>数据和逻辑永久单向流动</strong>我们看一下他的流程图<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/flux.png" alt="flux"><br>详细点就是<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/flux2.png" alt="flux"><br>简单的用语言说就是：</p>
+<h1 id="HOC"><a href="#HOC" class="headerlink" title="HOC"></a>HOC</h1><p>HOC 就是高阶组件吗，之前有博客介绍了的，虽然写的有点烂但我这里就不赘述了，这里用一个计数器的demo，直接上高阶组件实现计数器的代码</p>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;View, Text,Button&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Count</span>(<span class="params">&#123;count,add,minus&#125;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;&#123;flex:1,alignItems:</span>&#x27;<span class="attr">center</span>&#x27;,<span class="attr">justifyContent:</span>&#x27;<span class="attr">center</span>&#x27;&#125;&#125;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Text</span>&gt;</span>You clicked &#123;count&#125; times<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;add&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">add</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;minus&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">minus</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;changeTheme&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">ChangeTheme</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">const</span> countNumber=<span class="function">(<span class="params">initNumber</span>)=&gt;</span> <span class="function">(<span class="params">WrappedComponent</span>)=&gt;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CountNumber</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">        state = &#123;<span class="attr">count</span>: initNumber&#125;;</span><br><span class="line">        add = <span class="function">() =&gt;</span> <span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span>&#125;);</span><br><span class="line">        minus = <span class="function">() =&gt;</span> <span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>: <span class="built_in">this</span>.state.count - <span class="number">1</span>&#125;);</span><br><span class="line">        <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                &#123;<span class="attr">...this.props</span>&#125;</span></span></span><br><span class="line"><span class="tag"><span class="xml">                <span class="attr">count</span>=<span class="string">&#123;this.state.count&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                <span class="attr">add</span>=<span class="string">&#123;this.add.bind(this)&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                <span class="attr">minus</span>=<span class="string">&#123;this.minus.bind(this)&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">            /&gt;</span></span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> countNumber(<span class="number">0</span>)(Count);</span><br></pre></td></tr></table></figure>
+<p>优点:<br>可以看到，高阶组件是把逻辑和UI分开了，Count组件指负责渲染UI，被传入HOC中才有了计数的逻辑，这很好的维护了内层组件的状态，降低了耦合度<br>缺点:</p>
 <ol>
-<li>用户访问 View</li>
-<li>View 发出用户的 Action</li>
-<li>Dispatcher 收到 Action，要求 Store 进行相应的更新</li>
-<li>Store 更新后，发出一个”change”事件</li>
-<li>View 收到”change”事件后，更新页面</li>
+<li>注意一下HOC的state是写死的，也就是说传入给Count组件的prop是写死的，这就有可能产生命名冲突，覆盖掉Count组件原有的props</li>
+<li>HOC是链式调用，会导致错误难以定位</li>
 </ol>
-<h1 id="Redux"><a href="#Redux" class="headerlink" title="Redux"></a>Redux</h1><p>简单的了解了Flux后，我们就看看Redux，Redux就是基于Flux架构实现的一个react库，用于集中式管理状态，我们先看看他的原理图<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/redux.png" alt="redux"></p>
+<h1 id="render-props"><a href="#render-props" class="headerlink" title="render props"></a>render props</h1><p>先直接上代码</p>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;View, Text,Button&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">RenderProps</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;&#123;flex:1,alignItems:</span>&#x27;<span class="attr">center</span>&#x27;,<span class="attr">justifyContent:</span>&#x27;<span class="attr">center</span>&#x27;&#125;&#125;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">CountNumber</span> <span class="attr">initNumber</span>=<span class="string">&#123;0&#125;</span> <span class="attr">render</span>=<span class="string">&#123;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    (&#123;<span class="attr">count</span>,<span class="attr">add</span>,<span class="attr">minus</span>&#125;)=&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Text</span>&gt;</span>You clicked &#123;count&#125; times<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;add&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">add</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;minus&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">minus</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;changeTheme&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">ChangeTheme</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;/&gt;</span></span></span><br><span class="line"><span class="xml">                &#125;&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">CountNumber</span>&gt;</span></span></span><br><span class="line">        &lt;/View&gt;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CountNumber</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span></span>&#123;</span><br><span class="line">    state=&#123;<span class="attr">count</span>:<span class="built_in">this</span>.props.initNumber&#125;;</span><br><span class="line">    add=<span class="function">()=&gt;</span><span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>:<span class="built_in">this</span>.state.count+<span class="number">1</span>&#125;);</span><br><span class="line">    minus=<span class="function">()=&gt;</span><span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>:<span class="built_in">this</span>.state.count-<span class="number">1</span>&#125;);</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.props.render(&#123;</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count,</span><br><span class="line">            <span class="attr">add</span>: <span class="built_in">this</span>.add,</span><br><span class="line">            <span class="attr">minus</span>:<span class="built_in">this</span>.minus</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样也实现了逻辑复用，还留下了一个“插槽”，也就是预留位置，缺点就是不能在return语句外访问数据，同时用的过多的话会跟HOC差不多，HOC是过长的链式调用形成异常栈，而render props则会形成潜逃地狱</p>
+<h1 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h1><p>最后看一看最新的自定义hook</p>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123;useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;View, Text,Button&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">HookCount</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count,addCount,minusCount] = useCountNumber(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;&#123;backgroundColor:theme,flex:1,alignItems:</span>&#x27;<span class="attr">center</span>&#x27;,<span class="attr">justifyContent:</span>&#x27;<span class="attr">center</span>&#x27;&#125;&#125;&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Text</span>&gt;</span>You clicked &#123;count&#125; times<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;addCount&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">add</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;minusCount&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">minus</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span> <span class="attr">onPress</span>=<span class="string">&#123;changeTheme&#125;</span> <span class="attr">title</span>=<span class="string">&#123;</span>&#x27;<span class="attr">ChangeTheme</span>&#x27;&#125;/&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">useCountNumber</span>(<span class="params">initNumber</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count, setCount] = useState(initNumber);</span><br><span class="line">    <span class="keyword">const</span> addCount=<span class="function">()=&gt;</span> setCount(count + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">const</span> minusCount=<span class="function">()=&gt;</span>setCount(count -<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        count,</span><br><span class="line">        addCount,</span><br><span class="line">        minusCount</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>反正 hook作为最新的语法，最好还是多用他，但也不能完全代替</p>
 <ul>
-<li>这个原理图就是，比如我们在UI界面端点击了一个按钮，要把这个按钮从白色变成红色，在我们点击后会触发点击时间，调用了store.dispath()方法把一个action传给store，然后store就会再帮我们调用reducer函数。reducer是个纯函数，他会根据action修改相应的状态并返回给store，然后store更新状态，我们button的颜色就会相应更改了(store.getState())</li>
+<li>Hooks：<ul>
+<li>替代 Class 的大部分用例，除了 getSnapshotBeforeUpdate 和 componentDidCatch 还不支持。</li>
+<li>提取复用逻辑。除了有明确父子关系的，其他场景都可以使用 Hooks。</li>
 </ul>
-<p>我们用形象点的语言来解释一下</p>
-<ul>
-<li>我们是顾客，去一个饭店吃饭，ReactComponents就是菜单，是我们能看到的UI图，然后我们点菜，就会告诉店小二我们要吃啥，这个店小二就是ActionCreators，店小二就会拿着我们的想要的食物(action)去告诉(dispatch)老板，老板就是store，然后老板再把这个消息告诉后厨(Reducers)，后厨知道我们要吃啥了，就刷刷刷加工给我们上食材(返回新状态)。</li>
+</li>
+<li>Render Props：在组件渲染上拥有更高的自由度，可以根据父组件提供的数据进行动态渲染。适合有明确父子关系的场景。</li>
+<li>高阶组件：适合用来做注入，并且生成一个新的可复用组件。适合用来写插件。</li>
 </ul>
-<p>重点API</p>
-<ol>
-<li>store.getState() 获取状态</li>
-<li>store.dispatch() 更改状态</li>
-<li>store.subscribe() 监听状态的改变</li>
-</ol>
-<p><strong>注意中间件的使用！并且中间件一般是是在dispatch里生效的</strong></p>
-<h1 id="react-redux"><a href="#react-redux" class="headerlink" title="react-redux"></a>react-redux</h1><p>就是 Facebook团队基于redux的影响出了一个可以更好的使用redux的一个库。<br>重点有如下API</p>
-<ul>
-<li>connect()</li>
-<li>&lt;Provider/&gt;组件</li>
-</ul>
-<p>先看看react-redux的模型图<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/react-redux.png" alt="react-redux"><br>react-redux中把一个组件拆开，分成UI组件和容器组件(更贴合于Flux架构)，然后UI组件不接受任何业务逻辑，就类似与纯函数，他就像一个“纯组件”，只通过接受过来的props参数来改变渲染结果，然后Count组件就负责承担业务逻辑和与redux沟通，并把store中的state以及更改state的方法(dispatch)分发给UI组件，而connect()方法就是起这个作用的。</p>
-<h2 id="connect"><a href="#connect" class="headerlink" title="connect()"></a>connect()</h2><p><code>const Container = connect(mapStateToProp,mapDispatchToProps)(UI)</code><br>这样Container就是一个被加工的容器组件，这传代码的意思是，connect方法接受两个参数：mapStateToProps和mapDispatchToProps。它们定义了 UI 组件的业务逻辑。前者负责输入逻辑，即将state映射到 UI 组件的参数（props），后者负责输出逻辑，即将用户对 UI 组件的操作映射成 Action。<br>从本质上说connect可以看作是一个高阶函数</p>
-<p>mapStateToProps</p>
-<ol>
-<li>mapStateToProps函数返回的是一个对象；</li>
-<li>返回的对象中的key就作为传递给UI组件props的key,value就作为传递给UI组件props的value</li>
-<li>mapStateToProps用于传递状态</li>
-</ol>
-<p>mapDispatchToProps</p>
-<ol>
-<li>mapDispatchToProps函数返回的是一个对象；</li>
-<li>返回的对象中的key就作为传递给UI组件props的key,value就作为传递给UI组件props的value</li>
-<li>mapDispatchToProps用于传递操作状态的方法</li>
-</ol>
-<h2 id="lt-Provider-gt"><a href="#lt-Provider-gt" class="headerlink" title="&lt;Provider/&gt;"></a>&lt;Provider/&gt;</h2><p>Provider组件就是基于react中的Context实现的，connect方法生成容器组件以后，需要让容器组件拿到state对象，才能生成 UI 组件的参数。这里用Provider就可以直接让容器组件拿到了。具体源码实现这里就不放了。</p>
-<h1 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h1><p>就看看redux在生产环境中是如何使用的吧,我们做出这样一个效果<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/ui.png" alt="ui"><br>上方Count组件可以拿到下方Person组件的人数，然后Person组件也可以取到上方Count组件的求和数，先看项目文件<br><img src="/2021/09/19/Flux%E4%B8%8ERedux/code.png" alt="code"></p>
-<h2 id="action"><a href="#action" class="headerlink" title="action"></a>action</h2><p>除了redux文件夹里面的东西要讲一讲外其他的都没啥必要了。那就按顺序，我们分析需求，要用到redux，就先把这些文件夹建起来，该装的依赖装好，然后分需求，看看有什么，Count组件要计算， Person组件要添加人数，然后根据这些需求去写action</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// constant.js 文件</span></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该模块是用于定义action对象中type类型的常量值，目的只有一个：便于管理的同时防止程序员单词写错</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> INCREMENT = <span class="string">&#x27;increment&#x27;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> DECREMENT = <span class="string">&#x27;decrement&#x27;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> ADD_PERSON = <span class="string">&#x27;add_person&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该文件专门为Count组件生成action对象</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> &#123;INCREMENT,DECREMENT&#125; <span class="keyword">from</span> <span class="string">&#x27;../constant&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//同步action，就是指action的值为Object类型的一般对象</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> increment = <span class="function"><span class="params">data</span> =&gt;</span> (&#123;<span class="attr">type</span>:INCREMENT,data&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> decrement = <span class="function"><span class="params">data</span> =&gt;</span> (&#123;<span class="attr">type</span>:DECREMENT,data&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//异步action，就是指action的值为函数,异步action中一般都会调用同步action，异步action不是必须要用的。</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> incrementAsync = <span class="function">(<span class="params">data,time</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function">(<span class="params">dispatch</span>)=&gt;</span>&#123;</span><br><span class="line">		<span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">			dispatch(increment(data))</span><br><span class="line">		&#125;,time)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  Person组件生成action对象</span></span><br><span class="line"><span class="keyword">import</span> &#123; ADD_PERSON &#125; <span class="keyword">from</span> <span class="string">&quot;../constant&quot;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> addPerson = <span class="function"><span class="params">personObj</span> =&gt;</span> (&#123;<span class="attr">type</span>:ADD_PERSON,<span class="attr">data</span>:personObj&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>然后就根据action写reducer</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	1.该文件是用于创建一个为Count组件服务的reducer，reducer的本质就是一个函数</span></span><br><span class="line"><span class="comment">	2.reducer函数会接到两个参数，分别为：之前的状态(preState)，动作对象(action)</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initState = <span class="number">0</span> <span class="comment">//初始化状态</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">countReducer</span>(<span class="params">preState=initState,action</span>)</span>&#123;</span><br><span class="line">	<span class="comment">//从action对象中获取：type、data</span></span><br><span class="line">	<span class="keyword">const</span> &#123;type,data&#125; = action</span><br><span class="line">	<span class="comment">//根据type决定如何加工数据</span></span><br><span class="line">	<span class="keyword">switch</span> (type) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;increment&#x27;</span>: <span class="comment">//如果是加</span></span><br><span class="line">			<span class="keyword">return</span> preState + data</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&#x27;decrement&#x27;</span>: <span class="comment">//若果是减</span></span><br><span class="line">			<span class="keyword">return</span> preState - data</span><br><span class="line">		<span class="attr">default</span>:</span><br><span class="line">			<span class="keyword">return</span> preState</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Person</span></span><br><span class="line"><span class="keyword">import</span> &#123;ADD_PERSON&#125; <span class="keyword">from</span> <span class="string">&#x27;../constant&#x27;</span></span><br><span class="line"><span class="comment">//初始化人的列表</span></span><br><span class="line"><span class="keyword">const</span> initState = [&#123;<span class="attr">id</span>:<span class="string">&#x27;001&#x27;</span>,<span class="attr">name</span>:<span class="string">&#x27;tom&#x27;</span>,<span class="attr">age</span>:<span class="number">18</span>&#125;]</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">personReducer</span>(<span class="params">preState=initState,action</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">const</span> &#123;type,data&#125; = action</span><br><span class="line">	<span class="keyword">switch</span> (type) &#123;</span><br><span class="line">		<span class="keyword">case</span> ADD_PERSON: <span class="comment">//若是添加一个人</span></span><br><span class="line">			<span class="keyword">return</span> [data,...preState]</span><br><span class="line">		<span class="attr">default</span>:</span><br><span class="line">			<span class="keyword">return</span> preState</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>然后联合reducer</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该文件用于汇总所有的reducer为一个总的reducer</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//引入combineReducers，用于汇总多个reducer</span></span><br><span class="line"><span class="keyword">import</span> &#123;combineReducers&#125; <span class="keyword">from</span> <span class="string">&#x27;redux&#x27;</span></span><br><span class="line"><span class="comment">//引入为Count组件服务的reducer</span></span><br><span class="line"><span class="keyword">import</span> count <span class="keyword">from</span> <span class="string">&#x27;./count&#x27;</span></span><br><span class="line"><span class="comment">//引入为Person组件服务的reducer</span></span><br><span class="line"><span class="keyword">import</span> persons <span class="keyword">from</span> <span class="string">&#x27;./person&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//汇总所有的reducer变为一个总的reducer</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span>  combineReducers(&#123;</span><br><span class="line">	count,</span><br><span class="line">	persons</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>然后创建store</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">	该文件专门用于暴露一个store对象，整个应用只有一个store对象</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//引入createStore，专门用于创建redux中最为核心的store对象</span></span><br><span class="line"><span class="keyword">import</span> &#123;createStore,applyMiddleware&#125; <span class="keyword">from</span> <span class="string">&#x27;redux&#x27;</span></span><br><span class="line"><span class="comment">//引入汇总之后的reducer</span></span><br><span class="line"><span class="keyword">import</span> reducer <span class="keyword">from</span> <span class="string">&#x27;./reducers&#x27;</span></span><br><span class="line"><span class="comment">//引入redux-thunk，用于支持异步action</span></span><br><span class="line"><span class="keyword">import</span> thunk <span class="keyword">from</span> <span class="string">&#x27;redux-thunk&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//暴露store </span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> createStore(reducer,applyMiddleware(thunk))</span><br></pre></td></tr></table></figure>
-
-<p>至此，关于redux的文件就弄好了，接下来就去弄容器组件，Count组件要的state是Count和跟Person人数，Action是数字的运算，则有</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"> <span class="keyword">export</span> <span class="keyword">default</span> connect(</span><br><span class="line">	<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">		<span class="attr">count</span>:state.count,</span><br><span class="line">		<span class="attr">personCount</span>:state.persons.length</span><br><span class="line">	&#125;),</span><br><span class="line">	&#123;increment,decrement,incrementAsync&#125;</span><br><span class="line">)(CountUI)</span><br></pre></td></tr></table></figure>
-<p>Person类似</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"> <span class="keyword">export</span> <span class="keyword">default</span> connect(</span><br><span class="line">	<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">		<span class="attr">count</span>:state.count,</span><br><span class="line">		<span class="attr">personCount</span>:state.persons.length</span><br><span class="line">	&#125;),</span><br><span class="line">	&#123;increment,decrement,incrementAsync&#125;</span><br><span class="line">)(CountUI)</span><br></pre></td></tr></table></figure>
-<p>至此，对于react的基本介绍就到这里了。</p>
 ]]></content>
       <categories>
         <category>笔记</category>
       </categories>
       <tags>
         <tag>react</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>antd的基本使用</title>
+    <url>/2021/05/12/antd%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="引入组件"><a href="#引入组件" class="headerlink" title="引入组件"></a>引入组件</h1><p>先引入antd库嘛<br><code>yarn add antd</code></p>
+<p>然后想用什么组件就去官网找相应代码，比如有一个Button按钮想引入，就直接import导入<br><code>import &#123;Button&#125; from &#39;antd&#39;</code><br>在你想要的合适的位置直接放进去就行<br><code>&lt;Button type=&quot;primary&quot;&gt;Primary Button&lt;/Button&gt;</code></p>
+<span id="more"></span>
+<p>用的比较多的是图标哈，就需要有另一个库<br><code>yarn add @ant-design/icons</code><br>想要啥就import导入然后写下来就行</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; WechatOutlined, WeiboOutlined&#125; <span class="keyword">from</span> <span class="string">&#x27;@ant-design/icons&#x27;</span></span><br><span class="line"></span><br><span class="line">&lt;WechatOutlined /&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">WeiboOutlined</span> /&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>还有轮播图啥的巴拉巴拉，自己去看官方文档就好了。</p>
+<h1 id="按需引入和自定义内容"><a href="#按需引入和自定义内容" class="headerlink" title="按需引入和自定义内容"></a>按需引入和自定义内容</h1><p>这个好好看官方文档吧，3版本和4版本的不一样，暂时还没弄懂。。。。</p>
+]]></content>
+      <categories>
+        <category>daily</category>
+      </categories>
+      <tags>
+        <tag>project</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>fetch详解</title>
+    <url>/2021/06/12/fetch%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<p>今天详细学一下fetch的用法</p>
+<span id="more"></span>
+
+<h1 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h1><h2 id="分派请求和读取响应"><a href="#分派请求和读取响应" class="headerlink" title="分派请求和读取响应"></a>分派请求和读取响应</h2><p>对于fetch的用法在上一篇Blog中有了基本的了解，现在我们在深入的看一下fetch的用法。<br>都知道，fetch是异步的，是关注分离的，fetch有一个必须的参数，就是URL，利用fetch获取URL资源后会返回一个pending状态的Promise。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = fetch(<span class="string">`url`</span>);</span><br><span class="line"><span class="built_in">console</span>.log(p); <span class="comment">// Promise(pending)</span></span><br></pre></td></tr></table></figure>
+
+<p>请求URL完成且资源可用后，Promise会生成一个Response对象。这个对象是API的封装，可以通过使用这个对象的属性和方法取得相应资源。<br>用text方法可以读取response对象的纯文本格式内容。</p>
+<p><code>response.text()</code></p>
+<h2 id="处理状态码和请求失败"><a href="#处理状态码和请求失败" class="headerlink" title="处理状态码和请求失败"></a>处理状态码和请求失败</h2><p>我们首先要知道一点，就是fetch在接收到一个代表错误的 HTTP 状态码时，从 fetch() 返回的 Promise 不会被标记为 reject， 即使响应的 HTTP 状态码是 404 或 500。相反，它会将 Promise 状态标记为 resolve （但是会将 resolve 的返回值的 ok 属性设置为 false ），仅当网络故障时或请求被阻止时，才会标记为 reject。</p>
+<p>也就是说，只有你断网了或请求错了，fetch啥东西也得不到，才会返回一个reject状态的Promise。从我自己的理解来看，fetch的意思就是取嘛，404，500 都是你访问到了，虽然取不到ok状态的response，但你好歹取到了404 500状态码和一个不知道什么鬼且ok是false的response，是吧，只要能取到东西fetch返回到Promise可以是成功的，就不会被报错。</p>
+<p>所以想判断fetch请求后的具体响应状态，就要用下面这些方法了。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">response.status() <span class="comment">//返回http状态码</span></span><br><span class="line">response.statysText() <span class="comment">// 返回状态文本 比如 200 - OK 404 - Not Found 500 - Internal Server Error</span></span><br><span class="line">response .ok() <span class="comment">// 询问请求是否成功，true 对应 200 - 299 状态码，其他都是false</span></span><br><span class="line">responese.url() <span class="comment">// 返回请求的 URL。如果 URL 存在跳转，该属性返回的是最终 URL。</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其余参数"><a href="#其余参数" class="headerlink" title="其余参数"></a>其余参数</h2><p>如果只传一个URL参数，则fetch会默认发送GET请求，要想进一步配置请求方式，则要传入第二个参数————一个init对象，init对象要按照下表的key/value填充<br>(具体的就去MDN上查，这里只写一些常用的)</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="comment">//具体的请求方法 ，“GET”，“POST”等</span></span><br><span class="line">    headers: <span class="comment">//一个用来定制HTTP标头的对象</span></span><br><span class="line">    body: <span class="comment">//POST请求的请求体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="常见的Fetch请求模式"><a href="#常见的Fetch请求模式" class="headerlink" title="常见的Fetch请求模式"></a>常见的Fetch请求模式</h1><p>这里是一些关于init对象的配置使用</p>
+<h2 id="发送JSON数据"><a href="#发送JSON数据" class="headerlink" title="发送JSON数据"></a>发送JSON数据</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> postData = <span class="built_in">JSON</span>.stringify(&#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;xyy&#x27;</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">fetch (<span class="string">`url`</span>),&#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: postDate,</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="在请求体中发送参数"><a href="#在请求体中发送参数" class="headerlink" title="在请求体中发送参数"></a>在请求体中发送参数</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> postData = <span class="string">&#x27;foo=bar&amp;lorem=ipsum&#x27;</span>;</span><br><span class="line"></span><br><span class="line">fetch (<span class="string">`url`</span>),&#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: postDate,</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">    <span class="string">&quot;Content-type&quot;</span>: <span class="string">&quot;application/x-www-form-urlencoded; charset=UTF-8&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="提交表单"><a href="#提交表单" class="headerlink" title="提交表单"></a>提交表单</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> form = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;form&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">&#x27;/users&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">  <span class="attr">body</span>: <span class="keyword">new</span> FormData(form)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>因为请求体支持FormData实现，所以fetch()就可以序列化并发送文件字段中的文件:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> imageFormData = <span class="keyword">new</span> FormData();</span><br><span class="line"><span class="keyword">let</span> imageInput = <span class="built_in">document</span>.querySelector(<span class="string">&quot;input[type=&#x27;file&#x27;]&quot;</span>);</span><br><span class="line"></span><br><span class="line">imageFormData.append(<span class="string">&#x27;image&#x27;</span>,imageInput.file[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现多个文件:</span></span><br><span class="line"><span class="comment">// let imageInput = document.querySelector(&quot;input[type=&#x27;file&#x27;][multiple]&quot;);</span></span><br><span class="line"><span class="comment">// for(let i = 0;i &lt; imageInput.fileslength; ++i)</span></span><br><span class="line"><span class="comment">// imageFormData.append(&#x27;image&#x27;,imageInput.file[i]);</span></span><br><span class="line"></span><br><span class="line">fetch(<span class="string">`url`</span>,&#123;</span><br><span class="line">    <span class="attr">method</span>:<span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: imageFormData</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>具体更高深的就自己去看MDN吧。</p>
+<h1 id="其他对象"><a href="#其他对象" class="headerlink" title="其他对象"></a>其他对象</h1><h2 id="Headers对象"><a href="#Headers对象" class="headerlink" title="Headers对象"></a>Headers对象</h2><p>Response对象里面有一个headers属性，指向Header对象，Headers对象就是所有外发请求和入站响应头部的容器，每个外发的Request实例都包涵一个空的Headers实例，可以通过Request.headers访问。</p>
+<ol>
+<li><p>headers对象形式：<br>headers对象与Map相似，因为Http头部本质上就是序列化后的键值对，所以Headers对象有get,set,has,delete等实例方法，也有相同的keys(),values()和entries()迭代器接口,对于这些方法的运用还是去看看Map吧，这里就不详细赘述了。</p>
+</li>
+<li><p>headers独有的特性<br>headers初始化的时候可以直接用普通obj形式对象(也就是{}包裹的键/值对对象)，Headers对象可以由append()方法添加多个值，调用不存在的值等同于调用set(),若是用append()多次添加一个键名，则该键名对应的值以逗号为分隔符显示。</p>
+</li>
+<li><p>头部护卫<br>就是限制Headers对象不被修改的一些知识，自行了解。</p>
+</li>
+</ol>
+<h1 id="Request对象"><a href="#Request对象" class="headerlink" title="Request对象"></a>Request对象</h1><p>顾名思义，Request对象是获取资源请求的接口。这个接口暴露了请求的相关信息，也暴露了使用请求题的不同方式。</p>
+<h2 id="创建Request对象"><a href="#创建Request对象" class="headerlink" title="创建Request对象"></a>创建Request对象</h2><p>通过构造函数初始化Request对象，为此传入一个input参数，一般是URL;</p>
+<p>Request对象也接收第二个参数，一个init对象，和fetch中的第二个参数一样，不加配置的话就传入默认值。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> r = <span class="keyword">new</span> Request(<span class="string">`url`</span>，&#123;<span class="comment">/*一些key/value*/</span>&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="克隆Request对象"><a href="#克隆Request对象" class="headerlink" title="克隆Request对象"></a>克隆Request对象</h2><p>除了构造函数创建Request对象外，还可以用clone()方法，</p>
+<p>有两种方法可以克隆一个Request对象</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 一.把Request实例作为input参数传给Request构造函数</span></span><br><span class="line"><span class="keyword">let</span> r1 = <span class="keyword">new</span> Request(<span class="string">`url`</span>);</span><br><span class="line"><span class="keyword">let</span> r2 = <span class="keyword">new</span> Request(r1); <span class="comment">// 如果传入init对象，则会覆盖。</span></span><br><span class="line"><span class="built_in">console</span>.log(r1.bodyused); <span class="comment">// true</span></span><br><span class="line"><span class="comment">//不能克隆一摸一样的值，r1会被标记为已使用，bodyused的值为true</span></span><br><span class="line"><span class="comment">//还有一些关于referrer和mode属性的改变，具体属性可以自己去了解一下。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 二.Request.clone()</span></span><br><span class="line"><span class="keyword">let</span> r1 = <span class="keyword">new</span> Request(<span class="string">`url`</span>);</span><br><span class="line"><span class="keyword">let</span> r2 = r1.clone() <span class="comment">//这个方法会让创建两个一摸一样的副本,bodyused的值为false</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(r1===r2) <span class="comment">// true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果请求对象的bodyused值为true，那么就不能对该Request对象创建副本。</p>
+<h2 id="在fetch-中使用Request对象"><a href="#在fetch-中使用Request对象" class="headerlink" title="在fetch()中使用Request对象"></a>在fetch()中使用Request对象</h2><p>fetch()和Request构造函数拥有相同的函数签名不是巧合，在调用fetch()的时候，可以传入已经构造好的Request实例而不是URL，和Request构造函数一样，传给fetch()的init对象会覆盖默认值。</p>
+<p>关键点在于，通过fetch()使用Request实例后会把其bodyused属性设置为true，要想对同一个Request实例多次调用fetch(),必须在第一次发送fetch()请求前调用clone方法。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> r = <span class="keyword">new</span> Request(<span class="string">`url`</span>);</span><br><span class="line"></span><br><span class="line">fetch(r.clone());</span><br><span class="line">fetch(r);</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Response对象"><a href="#Response对象" class="headerlink" title="Response对象"></a>Response对象</h1><p>Response对象是获取资源响应的接口。这个接口暴露了响应的相关信息，也暴露了使用响应体的不同方式。</p>
+<h2 id="创建Response对象"><a href="#创建Response对象" class="headerlink" title="创建Response对象"></a>创建Response对象</h2><p>和前面几个对象一样，可以用构造函数的方法创建Response对象，且该构造函数不需要必须参数，此时Response实例的属性均为默认值，因为它并不代表实际的HTTP响应。</p>
+<p>Response构造函数接收一个可选的body参数，这个body可以是null，等同于init对象中的body，还可以接收一个可选的init对象，该init对象应有三个键值对</p>
+<pre><code>    headers 必须是Headers对象实例
+    status 表示HTTP的状态码
+    statusText 表示HTTP响应状态的字符串
+</code></pre>
+<p>但大部分情况下，产生Response对象的主要方式还是调用fetch(),fetch()返回一个最终会成为Response对象的Promise实例，</p>
+<p>还有两种生成Response对象的静态方法，分别是Response.redirect()和Response.error()，前者接收一个URL和一个重定向状态码，(301,302…),返回重定向的Response对象:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Response.redirect(<span class="string">`url`</span>,<span class="number">301</span>)</span><br></pre></td></tr></table></figure>
+<p>后者则用于产生表示网络错误的Response对象，(网络错误会导致fetch()期约被拒绝).</p>
+<p>Response对象只包含一组只读属性，描述了完成后的状态</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">headers: <span class="comment">//响应包含的Headers对象</span></span><br><span class="line">ok: <span class="comment">//布尔值，表示HTTP状态码的含义</span></span><br><span class="line">redirected: <span class="comment">//布尔值，表示响应是否至少经过一次定向</span></span><br><span class="line">status: <span class="comment">//整数，表示响应的HTTP状态码</span></span><br><span class="line">statusText: <span class="comment">//字符串，对HTTP状态码的描述</span></span><br><span class="line">type: <span class="comment">//字符串，包含响应类型。分为basic/cors/error/opaque/opaqueredirect</span></span><br><span class="line">url: <span class="comment">//包含响应URL的字符串</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="克隆Response对象"><a href="#克隆Response对象" class="headerlink" title="克隆Response对象"></a>克隆Response对象</h2><p>就是使用clone()方法呀，创建一个一摸一样的副本，和Request对象的clone差不多，该方法也主要用于多次读取Response对象，Response对象是只可以读取一次的。</p>
+<h2 id="Request、Response、Body的混用"><a href="#Request、Response、Body的混用" class="headerlink" title="Request、Response、Body的混用"></a>Request、Response、Body的混用</h2><p>这部分内容涉及到Body的五个方法，用于将ReadableStream转存到缓冲区的内存里，这部分也没太懂，可能是浏览器机制和HTTP没有过多了解的缘故，打算重看一遍图解HTTP，所以这部分笔记就先不写了，有空再补，</p>
+<h2 id="一次性流"><a href="#一次性流" class="headerlink" title="一次性流"></a>一次性流</h2><p>因为Body混入是构建在ReadableStream之上的，所以主体流只能使用一次。这也是为什么要用clone方法的原因。</p>
+<h2 id="使用ReadableStream主体"><a href="#使用ReadableStream主体" class="headerlink" title="使用ReadableStream主体"></a>使用ReadableStream主体</h2><p>这部分也后续再补吧，实在没怎么看懂….</p>
+]]></content>
+      <tags>
+        <tag>js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Regexp</title>
+    <url>/2021/06/09/Regexp/</url>
+    <content><![CDATA[<p>正则表达式就是用于定义某种规则，计算机可以通过该规则检测一个字符串是否符合该规则<br>或者将该字符串中符合正则表达式的内容提取出来</p>
+<span id="more"></span>
+
+<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><h2 id="创建一个正则表达式"><a href="#创建一个正则表达式" class="headerlink" title="创建一个正则表达式"></a>创建一个正则表达式</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Regexp构造函数</span></span><br><span class="line"><span class="keyword">let</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">&#x27;正则表达式&#x27;</span>,<span class="string">&#x27;匹配模式&#x27;</span>) <span class="comment">//是一个对象 更简单</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 字面量</span></span><br><span class="line"><span class="keyword">let</span> reg = <span class="regexp">/a/i</span>; <span class="comment">//更灵活</span></span><br></pre></td></tr></table></figure>
+<p>每个正则表达式就是一个RegExp实例对象，有着自己的属性，包括source，lastIndex等，这些属性可以全面了解正则表达式等信息，但实际用得不多。</p>
+<p>在正则表达式中，不属于特殊字符代码的(如\n)的反斜杠会被保留，不像在一般字符串中被忽略，并且问号和加号等特殊字符在正则表达式中具有特殊含义，若要表示该字符本身，前面也要加\说明，如/+/。<br>匹配模式有i g m等，主要用: i忽略大小写 g开启全局匹配。</p>
+<p>有一个test方法可以检测某字符串是否符合正则表达式,只要含有正则表达式中的的字符串就回返回true。<br>而exec()方法可以返回一个包含匹配信息的数组对象，该数组对象中有index(字符串中匹配模式的其实位置)和input(查找的字符串)两个属性，如果没有匹配到就返回一个null，如果不开启g，则每次调用该方法就回返回第一个匹配项，开启后则回往后搜寻下一个匹配项，并改变lastIndex属性的值(默认一直为0)。当正则表达式含有括号分组的字表达后，调用该方法后的数组对象第一个元素还是整体匹配的部分，但接下来的元素是由那些括号组所匹配的部分</p>
+<h2 id="字符集"><a href="#字符集" class="headerlink" title="字符集"></a>字符集</h2><p>｜表示或的意思 a|b  []里面也表示｜的关系  /[a-z]/表示任意的小写字母 /[A-z]/任意字母<br>/[^a]/表示不包含a 除了a。<br>字符集也有一些内置的快捷方式。</p>
+<pre><code>    \d  任何数字字符
+    \w  字母数字字符
+    \s  任何空白符字符
+    \D  非数字字符
+    \W  非字母数字字符
+    \S  非空白符字符
+    \b  匹配单词边界 (所谓单词就是隶属于\w下的字串)
+    \B  匹配非单词边界
+    .  除换行符以外的所有字符
+</code></pre>
+<p>对于要匹配重复的部分 则有以下方法，如：</p>
+<pre><code>    /+/ 匹配一个或多个字符
+    /*/ 与加号类似，但允许匹配0次
+    /?/ 令某一部分可选，即可能出现一次或者零次
+
+    //若要表示精确次数，就用&#123;&#125;，如
+
+    &#123;2&#125; 表示出现两次
+    &#123;2,4&#125; 表示出现2-4次
+    &#123;2,&#125; 表示出现两次即以上
+</code></pre>
+<p><strong>记得若要重复多个元素时，要用括号，例如 <code>/(abc)+/</code></strong></p>
+<pre><code>    /^a/ 表示必须以a开头
+    /a$/ 表示必须以a结尾
+</code></pre>
+<p>所以/^a$/表示所匹配的字符串中有且只有a</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">`Lis, Bar</span></span><br><span class="line"><span class="string">Mc, John</span></span><br><span class="line"><span class="string">Wad, Phio`</span>.replace(<span class="regexp">/(\w+), (\w+)/g</span>, <span class="string">&#x27;$2 $1&#x27;</span>));</span><br><span class="line"><span class="comment">// $1 和 $2 是模式中带括号的组。 整个匹配可以用 $&amp;来表示。</span></span><br><span class="line"><span class="comment">// 上述代码是 $1 指向 Lis / Mc / Wad ，$2 指向 Bar / John / phio ,然后$2 指向的匹配代替了$1匹配原有的位置</span></span><br></pre></td></tr></table></figure>
+
+<p>字符串加正则<br>search 检索与正则表达式匹配的值 类似于indexof()方法 返回索引，搜不到就返回-1，接收正则表达式为参数<br>match   找到一个或多个正则的匹配  默认情况下之检索一个，开启全局匹配后则可以匹配多个， 把匹配到的内容封装成一个数组返回<br>replace 替换与正则表达式匹配的字串 两个参数，第一个是正则表达式，第二个是替换内容<br>split   把字符串拆分成数组</p>
+<h2 id="匹配机制"><a href="#匹配机制" class="headerlink" title="匹配机制"></a>匹配机制</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> animalCount = <span class="regexp">/\b\d+ (pig|cow|chicken)s?\b/</span></span><br><span class="line"><span class="built_in">console</span>.log(animalCount.tesr(<span class="string">&quot;15 pigs&quot;</span>)) <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/06/09/Regexp/9-1.svg" alt="01"></p>
+<p>回溯:<br>正则表达式/\b([01]+b|\d+|[\da-f]h)\b/可以匹配三种字符串：以b结尾的二进制数字，以h结尾的十六进制数字（即以 16 为进制，字母a到f表示数字 10 到 15），或者没有后缀字符的常规十进制数字。这是对应的图表。<br><img src="/2021/06/09/Regexp/9-2.svg" alt="02"></p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
       </tags>
   </entry>
   <entry>
@@ -899,115 +977,6 @@
       <tags>
         <tag>react</tag>
         <tag>project</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>fetch详解</title>
-    <url>/2021/06/12/fetch%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<p>今天详细学一下fetch的用法</p>
-<span id="more"></span>
-
-<h1 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h1><h2 id="分派请求和读取响应"><a href="#分派请求和读取响应" class="headerlink" title="分派请求和读取响应"></a>分派请求和读取响应</h2><p>对于fetch的用法在上一篇Blog中有了基本的了解，现在我们在深入的看一下fetch的用法。<br>都知道，fetch是异步的，是关注分离的，fetch有一个必须的参数，就是URL，利用fetch获取URL资源后会返回一个pending状态的Promise。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = fetch(<span class="string">`url`</span>);</span><br><span class="line"><span class="built_in">console</span>.log(p); <span class="comment">// Promise(pending)</span></span><br></pre></td></tr></table></figure>
-
-<p>请求URL完成且资源可用后，Promise会生成一个Response对象。这个对象是API的封装，可以通过使用这个对象的属性和方法取得相应资源。<br>用text方法可以读取response对象的纯文本格式内容。</p>
-<p><code>response.text()</code></p>
-<h2 id="处理状态码和请求失败"><a href="#处理状态码和请求失败" class="headerlink" title="处理状态码和请求失败"></a>处理状态码和请求失败</h2><p>我们首先要知道一点，就是fetch在接收到一个代表错误的 HTTP 状态码时，从 fetch() 返回的 Promise 不会被标记为 reject， 即使响应的 HTTP 状态码是 404 或 500。相反，它会将 Promise 状态标记为 resolve （但是会将 resolve 的返回值的 ok 属性设置为 false ），仅当网络故障时或请求被阻止时，才会标记为 reject。</p>
-<p>也就是说，只有你断网了或请求错了，fetch啥东西也得不到，才会返回一个reject状态的Promise。从我自己的理解来看，fetch的意思就是取嘛，404，500 都是你访问到了，虽然取不到ok状态的response，但你好歹取到了404 500状态码和一个不知道什么鬼且ok是false的response，是吧，只要能取到东西fetch返回到Promise可以是成功的，就不会被报错。</p>
-<p>所以想判断fetch请求后的具体响应状态，就要用下面这些方法了。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">response.status() <span class="comment">//返回http状态码</span></span><br><span class="line">response.statysText() <span class="comment">// 返回状态文本 比如 200 - OK 404 - Not Found 500 - Internal Server Error</span></span><br><span class="line">response .ok() <span class="comment">// 询问请求是否成功，true 对应 200 - 299 状态码，其他都是false</span></span><br><span class="line">responese.url() <span class="comment">// 返回请求的 URL。如果 URL 存在跳转，该属性返回的是最终 URL。</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="其余参数"><a href="#其余参数" class="headerlink" title="其余参数"></a>其余参数</h2><p>如果只传一个URL参数，则fetch会默认发送GET请求，要想进一步配置请求方式，则要传入第二个参数————一个init对象，init对象要按照下表的key/value填充<br>(具体的就去MDN上查，这里只写一些常用的)</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="comment">//具体的请求方法 ，“GET”，“POST”等</span></span><br><span class="line">    headers: <span class="comment">//一个用来定制HTTP标头的对象</span></span><br><span class="line">    body: <span class="comment">//POST请求的请求体</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="常见的Fetch请求模式"><a href="#常见的Fetch请求模式" class="headerlink" title="常见的Fetch请求模式"></a>常见的Fetch请求模式</h1><p>这里是一些关于init对象的配置使用</p>
-<h2 id="发送JSON数据"><a href="#发送JSON数据" class="headerlink" title="发送JSON数据"></a>发送JSON数据</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> postData = <span class="built_in">JSON</span>.stringify(&#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;xyy&#x27;</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">fetch (<span class="string">`url`</span>),&#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: postDate,</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="在请求体中发送参数"><a href="#在请求体中发送参数" class="headerlink" title="在请求体中发送参数"></a>在请求体中发送参数</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> postData = <span class="string">&#x27;foo=bar&amp;lorem=ipsum&#x27;</span>;</span><br><span class="line"></span><br><span class="line">fetch (<span class="string">`url`</span>),&#123;</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: postDate,</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">    <span class="string">&quot;Content-type&quot;</span>: <span class="string">&quot;application/x-www-form-urlencoded; charset=UTF-8&quot;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="提交表单"><a href="#提交表单" class="headerlink" title="提交表单"></a>提交表单</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> form = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;form&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">&#x27;/users&#x27;</span>, &#123;</span><br><span class="line">  <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">  <span class="attr">body</span>: <span class="keyword">new</span> FormData(form)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>因为请求体支持FormData实现，所以fetch()就可以序列化并发送文件字段中的文件:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> imageFormData = <span class="keyword">new</span> FormData();</span><br><span class="line"><span class="keyword">let</span> imageInput = <span class="built_in">document</span>.querySelector(<span class="string">&quot;input[type=&#x27;file&#x27;]&quot;</span>);</span><br><span class="line"></span><br><span class="line">imageFormData.append(<span class="string">&#x27;image&#x27;</span>,imageInput.file[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现多个文件:</span></span><br><span class="line"><span class="comment">// let imageInput = document.querySelector(&quot;input[type=&#x27;file&#x27;][multiple]&quot;);</span></span><br><span class="line"><span class="comment">// for(let i = 0;i &lt; imageInput.fileslength; ++i)</span></span><br><span class="line"><span class="comment">// imageFormData.append(&#x27;image&#x27;,imageInput.file[i]);</span></span><br><span class="line"></span><br><span class="line">fetch(<span class="string">`url`</span>,&#123;</span><br><span class="line">    <span class="attr">method</span>:<span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: imageFormData</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>具体更高深的就自己去看MDN吧。</p>
-<h1 id="其他对象"><a href="#其他对象" class="headerlink" title="其他对象"></a>其他对象</h1><h2 id="Headers对象"><a href="#Headers对象" class="headerlink" title="Headers对象"></a>Headers对象</h2><p>Response对象里面有一个headers属性，指向Header对象，Headers对象就是所有外发请求和入站响应头部的容器，每个外发的Request实例都包涵一个空的Headers实例，可以通过Request.headers访问。</p>
-<ol>
-<li><p>headers对象形式：<br>headers对象与Map相似，因为Http头部本质上就是序列化后的键值对，所以Headers对象有get,set,has,delete等实例方法，也有相同的keys(),values()和entries()迭代器接口,对于这些方法的运用还是去看看Map吧，这里就不详细赘述了。</p>
-</li>
-<li><p>headers独有的特性<br>headers初始化的时候可以直接用普通obj形式对象(也就是{}包裹的键/值对对象)，Headers对象可以由append()方法添加多个值，调用不存在的值等同于调用set(),若是用append()多次添加一个键名，则该键名对应的值以逗号为分隔符显示。</p>
-</li>
-<li><p>头部护卫<br>就是限制Headers对象不被修改的一些知识，自行了解。</p>
-</li>
-</ol>
-<h1 id="Request对象"><a href="#Request对象" class="headerlink" title="Request对象"></a>Request对象</h1><p>顾名思义，Request对象是获取资源请求的接口。这个接口暴露了请求的相关信息，也暴露了使用请求题的不同方式。</p>
-<h2 id="创建Request对象"><a href="#创建Request对象" class="headerlink" title="创建Request对象"></a>创建Request对象</h2><p>通过构造函数初始化Request对象，为此传入一个input参数，一般是URL;</p>
-<p>Request对象也接收第二个参数，一个init对象，和fetch中的第二个参数一样，不加配置的话就传入默认值。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> r = <span class="keyword">new</span> Request(<span class="string">`url`</span>，&#123;<span class="comment">/*一些key/value*/</span>&#125;);</span><br></pre></td></tr></table></figure>
-
-<h2 id="克隆Request对象"><a href="#克隆Request对象" class="headerlink" title="克隆Request对象"></a>克隆Request对象</h2><p>除了构造函数创建Request对象外，还可以用clone()方法，</p>
-<p>有两种方法可以克隆一个Request对象</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 一.把Request实例作为input参数传给Request构造函数</span></span><br><span class="line"><span class="keyword">let</span> r1 = <span class="keyword">new</span> Request(<span class="string">`url`</span>);</span><br><span class="line"><span class="keyword">let</span> r2 = <span class="keyword">new</span> Request(r1); <span class="comment">// 如果传入init对象，则会覆盖。</span></span><br><span class="line"><span class="built_in">console</span>.log(r1.bodyused); <span class="comment">// true</span></span><br><span class="line"><span class="comment">//不能克隆一摸一样的值，r1会被标记为已使用，bodyused的值为true</span></span><br><span class="line"><span class="comment">//还有一些关于referrer和mode属性的改变，具体属性可以自己去了解一下。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 二.Request.clone()</span></span><br><span class="line"><span class="keyword">let</span> r1 = <span class="keyword">new</span> Request(<span class="string">`url`</span>);</span><br><span class="line"><span class="keyword">let</span> r2 = r1.clone() <span class="comment">//这个方法会让创建两个一摸一样的副本,bodyused的值为false</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(r1===r2) <span class="comment">// true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>如果请求对象的bodyused值为true，那么就不能对该Request对象创建副本。</p>
-<h2 id="在fetch-中使用Request对象"><a href="#在fetch-中使用Request对象" class="headerlink" title="在fetch()中使用Request对象"></a>在fetch()中使用Request对象</h2><p>fetch()和Request构造函数拥有相同的函数签名不是巧合，在调用fetch()的时候，可以传入已经构造好的Request实例而不是URL，和Request构造函数一样，传给fetch()的init对象会覆盖默认值。</p>
-<p>关键点在于，通过fetch()使用Request实例后会把其bodyused属性设置为true，要想对同一个Request实例多次调用fetch(),必须在第一次发送fetch()请求前调用clone方法。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> r = <span class="keyword">new</span> Request(<span class="string">`url`</span>);</span><br><span class="line"></span><br><span class="line">fetch(r.clone());</span><br><span class="line">fetch(r);</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="Response对象"><a href="#Response对象" class="headerlink" title="Response对象"></a>Response对象</h1><p>Response对象是获取资源响应的接口。这个接口暴露了响应的相关信息，也暴露了使用响应体的不同方式。</p>
-<h2 id="创建Response对象"><a href="#创建Response对象" class="headerlink" title="创建Response对象"></a>创建Response对象</h2><p>和前面几个对象一样，可以用构造函数的方法创建Response对象，且该构造函数不需要必须参数，此时Response实例的属性均为默认值，因为它并不代表实际的HTTP响应。</p>
-<p>Response构造函数接收一个可选的body参数，这个body可以是null，等同于init对象中的body，还可以接收一个可选的init对象，该init对象应有三个键值对</p>
-<pre><code>    headers 必须是Headers对象实例
-    status 表示HTTP的状态码
-    statusText 表示HTTP响应状态的字符串
-</code></pre>
-<p>但大部分情况下，产生Response对象的主要方式还是调用fetch(),fetch()返回一个最终会成为Response对象的Promise实例，</p>
-<p>还有两种生成Response对象的静态方法，分别是Response.redirect()和Response.error()，前者接收一个URL和一个重定向状态码，(301,302…),返回重定向的Response对象:</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">Response.redirect(<span class="string">`url`</span>,<span class="number">301</span>)</span><br></pre></td></tr></table></figure>
-<p>后者则用于产生表示网络错误的Response对象，(网络错误会导致fetch()期约被拒绝).</p>
-<p>Response对象只包含一组只读属性，描述了完成后的状态</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">headers: <span class="comment">//响应包含的Headers对象</span></span><br><span class="line">ok: <span class="comment">//布尔值，表示HTTP状态码的含义</span></span><br><span class="line">redirected: <span class="comment">//布尔值，表示响应是否至少经过一次定向</span></span><br><span class="line">status: <span class="comment">//整数，表示响应的HTTP状态码</span></span><br><span class="line">statusText: <span class="comment">//字符串，对HTTP状态码的描述</span></span><br><span class="line">type: <span class="comment">//字符串，包含响应类型。分为basic/cors/error/opaque/opaqueredirect</span></span><br><span class="line">url: <span class="comment">//包含响应URL的字符串</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="克隆Response对象"><a href="#克隆Response对象" class="headerlink" title="克隆Response对象"></a>克隆Response对象</h2><p>就是使用clone()方法呀，创建一个一摸一样的副本，和Request对象的clone差不多，该方法也主要用于多次读取Response对象，Response对象是只可以读取一次的。</p>
-<h2 id="Request、Response、Body的混用"><a href="#Request、Response、Body的混用" class="headerlink" title="Request、Response、Body的混用"></a>Request、Response、Body的混用</h2><p>这部分内容涉及到Body的五个方法，用于将ReadableStream转存到缓冲区的内存里，这部分也没太懂，可能是浏览器机制和HTTP没有过多了解的缘故，打算重看一遍图解HTTP，所以这部分笔记就先不写了，有空再补，</p>
-<h2 id="一次性流"><a href="#一次性流" class="headerlink" title="一次性流"></a>一次性流</h2><p>因为Body混入是构建在ReadableStream之上的，所以主体流只能使用一次。这也是为什么要用clone方法的原因。</p>
-<h2 id="使用ReadableStream主体"><a href="#使用ReadableStream主体" class="headerlink" title="使用ReadableStream主体"></a>使用ReadableStream主体</h2><p>这部分也后续再补吧，实在没怎么看懂….</p>
-]]></content>
-      <tags>
-        <tag>js</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>iterm2</title>
-    <url>/2021/06/09/iterm2/</url>
-    <content><![CDATA[<p>关于自己Mac电脑的iterm2终端美化配置方案</p>
-<span id="more"></span>
-
-<p><img src="/2021/06/09/iterm2/2.png" alt="2"></p>
-<h1 id="oh-my-zsh-安装"><a href="#oh-my-zsh-安装" class="headerlink" title="oh-my-zsh 安装"></a>oh-my-zsh 安装</h1><p>一个美化要用的东西，iterm2就直接App store下载就行了</p>
-<p>先切换命令 </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
-
-<p>再安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</span><br></pre></td></tr></table></figure>
-
-<p>安装失败就先git clone</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh</span><br></pre></td></tr></table></figure>
-
-<p>再替换</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</span><br></pre></td></tr></table></figure>
-<p>这样就好啦</p>
-<h1 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h1><p>命令高量 代码补全 和一个jump 文件夹<br>前两个不咋用 最后一个好用<br>先安装brew 然后</p>
-<p><code>brew install autojump</code></p>
-<p>然后编辑 vim ~/.zshrc 文件, 找到 plugins 配置, 增加 autojump 插件.</p>
-<h1 id="窗口外观"><a href="#窗口外观" class="headerlink" title="窗口外观"></a>窗口外观</h1><p>就是下拉式嘛 看下面这些就好咯<br><a href="https://www.bilibili.com/read/cv8638110/">链接</a><br>配色 rgb(133,73,71)<br>字体 Andale Moto</p>
-]]></content>
-      <categories>
-        <category>daily</category>
-      </categories>
-      <tags>
-        <tag>mac</tag>
       </tags>
   </entry>
   <entry>
@@ -1097,6 +1066,38 @@
       </tags>
   </entry>
   <entry>
+    <title>iterm2</title>
+    <url>/2021/06/09/iterm2/</url>
+    <content><![CDATA[<p>关于自己Mac电脑的iterm2终端美化配置方案</p>
+<span id="more"></span>
+
+<p><img src="/2021/06/09/iterm2/2.png" alt="2"></p>
+<h1 id="oh-my-zsh-安装"><a href="#oh-my-zsh-安装" class="headerlink" title="oh-my-zsh 安装"></a>oh-my-zsh 安装</h1><p>一个美化要用的东西，iterm2就直接App store下载就行了</p>
+<p>先切换命令 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+
+<p>再安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>安装失败就先git clone</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh</span><br></pre></td></tr></table></figure>
+
+<p>再替换</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</span><br></pre></td></tr></table></figure>
+<p>这样就好啦</p>
+<h1 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h1><p>命令高量 代码补全 和一个jump 文件夹<br>前两个不咋用 最后一个好用<br>先安装brew 然后</p>
+<p><code>brew install autojump</code></p>
+<p>然后编辑 vim ~/.zshrc 文件, 找到 plugins 配置, 增加 autojump 插件.</p>
+<h1 id="窗口外观"><a href="#窗口外观" class="headerlink" title="窗口外观"></a>窗口外观</h1><p>就是下拉式嘛 看下面这些就好咯<br><a href="https://www.bilibili.com/read/cv8638110/">链接</a><br>配色 rgb(133,73,71)<br>字体 Andale Moto</p>
+]]></content>
+      <categories>
+        <category>daily</category>
+      </categories>
+      <tags>
+        <tag>mac</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>map()中的key</title>
     <url>/2021/06/09/map-%E4%B8%AD%E7%9A%84key/</url>
     <content><![CDATA[<p> 经典面试题:<br>      1). react/vue中的key有什么作用？（key的内部原理是什么？）<br>      2). 为什么遍历列表时，key最好不要用index?</p>
@@ -1155,151 +1156,6 @@
       </categories>
       <tags>
         <tag>ts</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>react源码初探</title>
-    <url>/2021/09/15/react%E6%BA%90%E7%A0%81%E5%88%9D%E6%8E%A2/</url>
-    <content><![CDATA[<p>总算到这一步了 看react源码部分的笔记</p>
-<span id="more"></span>
-
-<h1 id="Virtual-DOM"><a href="#Virtual-DOM" class="headerlink" title="Virtual DOM"></a>Virtual DOM</h1><p>Virtual DOM 是 React 的核心与精髓所在,React就是靠着VDOM和高效的diff算法大量减少了渲染DOM的代价。<br>VDOM中转换成浏览器中真实的DOM树，即VDOM其实也存在于树这种数据结构中，那他就会有自己的节点，他的节点被称为 ReactNode， 分为3种类型 ReactElement、ReactFragment 和ReactText，其中，ReactElement 又分为 ReactComponentElement 和 ReactDOMElement。<br>先看看这些类型源码，涉及到Ts部分、</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ReactNode = ReactElement | ReactFragment | ReactText;</span><br><span class="line"><span class="keyword">type</span> ReactElement = ReactComponentElement | ReactDOMElement;</span><br><span class="line"><span class="keyword">type</span> ReactDOMElement = &#123; <span class="attr">type</span> : <span class="built_in">string</span>,</span><br><span class="line"><span class="attr">props</span> : &#123;</span><br><span class="line"><span class="attr">children</span> : ReactNodeList, <span class="attr">className</span> : <span class="built_in">string</span>,</span><br><span class="line">etc.</span><br><span class="line">&#125;,</span><br><span class="line"><span class="attr">key</span> : <span class="built_in">string</span> | <span class="built_in">boolean</span> | <span class="built_in">number</span> | <span class="literal">null</span>, <span class="attr">ref</span> : <span class="built_in">string</span> | <span class="literal">null</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">type</span> ReactComponentElement&lt;TProps&gt; = &#123; <span class="attr">type</span> : ReactClass&lt;TProps&gt;,</span><br><span class="line">props : TProps,</span><br><span class="line"><span class="attr">key</span> : <span class="built_in">string</span> | <span class="built_in">boolean</span> | <span class="built_in">number</span> | <span class="literal">null</span>, <span class="attr">ref</span> : <span class="built_in">string</span> | <span class="literal">null</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">type</span> ReactFragment = <span class="built_in">Array</span>&lt;ReactNode | ReactEmpty&gt;; <span class="keyword">type</span> ReactNodeList = ReactNode | ReactEmpty;</span><br><span class="line"><span class="keyword">type</span> ReactText = <span class="built_in">string</span> | <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">type</span> ReactEmpty = <span class="literal">null</span> | <span class="literal">undefined</span> | <span class="built_in">boolean</span>;</span><br></pre></td></tr></table></figure>
-<p>然后我们写JSX的时候，react会帮我吗掉createElement方法构造虚拟节点，这是个蛮重要的部分，直接上代码</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// createElement 只是做了简单的参数修正，返回一个 ReactElement 实例对象， // 也就是虚拟元素的实例</span></span><br><span class="line">ReactElement.createElement = <span class="function"><span class="keyword">function</span>(<span class="params"><span class="keyword">type</span>, config, children</span>) </span>&#123;</span><br><span class="line"><span class="comment">// 初始化参数</span></span><br><span class="line"><span class="keyword">var</span> propName;</span><br><span class="line"><span class="keyword">var</span> props = &#123;&#125;; </span><br><span class="line"><span class="keyword">var</span> key = <span class="literal">null</span>; </span><br><span class="line"><span class="keyword">var</span> ref = <span class="literal">null</span>; </span><br><span class="line"><span class="keyword">var</span> self = <span class="literal">null</span>; </span><br><span class="line"><span class="keyword">var</span> source = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果存在 config，则提取里面的内容 if (config != null) &#123;</span></span><br><span class="line"><span class="keyword">if</span> (config != <span class="literal">null</span>) &#123;</span><br><span class="line">  ref = config.ref === <span class="literal">undefined</span> ? <span class="literal">null</span> : config.ref;</span><br><span class="line">  key = config.key === <span class="literal">undefined</span> ? <span class="literal">null</span> : <span class="string">&#x27;&#x27;</span> + config.key;</span><br><span class="line">  self = config.__self === <span class="literal">undefined</span> ? <span class="literal">null</span> : config.__self; </span><br><span class="line">  source = config.__source === <span class="literal">undefined</span> ? <span class="literal">null</span> : config.__source; </span><br><span class="line"><span class="comment">// 复制 config 里的内容到 props(如 id 和 className 等)</span></span><br><span class="line">  <span class="keyword">for</span> (propName <span class="keyword">in</span> config) &#123;</span><br><span class="line">    <span class="keyword">if</span> (config.hasOwnProperty(propName) &amp;&amp; !RESERVED_PROPS.hasOwnProperty(propName)) &#123;</span><br><span class="line">      props[propName] = config[propName];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 处理 children，全部挂载到 props 的 children 属性上。如果只有一个参数，直接赋值给 children， // 否则做合并处理</span></span><br><span class="line"><span class="keyword">var</span> childrenLength = <span class="built_in">arguments</span>.length - <span class="number">2</span>;</span><br><span class="line"><span class="keyword">if</span> (childrenLength === <span class="number">1</span>) &#123;</span><br><span class="line">  props.children = children;</span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (childrenLength &gt; <span class="number">1</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> childArray = <span class="built_in">Array</span>(childrenLength); </span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; childrenLength; i++) &#123;</span><br><span class="line">    childArray[i] = <span class="built_in">arguments</span>[i + <span class="number">2</span>]; </span><br><span class="line">  &#125;</span><br><span class="line">  props.children = childArray; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果某个 prop 为空且存在默认的 prop，则将默认 prop 赋给当前的 prop </span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">type</span> &amp;&amp; <span class="keyword">type</span>.defaultProps) &#123;</span><br><span class="line">  <span class="keyword">var</span> defaultProps = <span class="keyword">type</span>.defaultProps;</span><br><span class="line">  <span class="keyword">for</span> (propName <span class="keyword">in</span> defaultProps) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> props[propName] === <span class="string">&#x27;undefined&#x27;</span>) &#123;</span><br><span class="line">       props[propName] = defaultProps[propName];</span><br><span class="line">    &#125; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 返回一个 ReactElement 实例对象</span></span><br><span class="line"><span class="keyword">return</span> ReactElement(<span class="keyword">type</span>, key, ref, self, source, ReactCurrentOwner.current, props); &#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="创建组件"><a href="#创建组件" class="headerlink" title="创建组件"></a>创建组件</h2><p>Virtual DOM 模型通过 createElement 创建虚拟元素，那又是如何创建组件的呢?</p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>react</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初探动态规划/回溯</title>
-    <url>/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</url>
-    <content><![CDATA[<p>数据结构上刷算法… 好说歹说算是入门了</p>
-<span id="more"></span>
-
-<h1 id="何为动态规划"><a href="#何为动态规划" class="headerlink" title="何为动态规划"></a>何为动态规划</h1><p>怎么说呢，动态规划就是是一种分治的思想，换句话说，就是把一个大问题，拆分成小问题，再把小问题接着拆分，拆到无可再分的时候，会得到最小的子问题，而子问题的答案很轻松就能得到，根据这个答案递推回去，就能得到原本问题的答案，是一种自底而上的做法。（当然也有自顶而下的方法）。动态规划核心套路是“穷举求最优解”，然后利用状态转移方程进行<strong>正确的穷举</strong>，也就是取消重叠子问题。<br>即，动态规划分治穷举后，两个重要特性就是 <strong>重叠子问题</strong>和<strong>最优子结构</strong></p>
-<h2 id="状态转移方程"><a href="#状态转移方程" class="headerlink" title="状态转移方程"></a>状态转移方程</h2><p>刚刚提到一个核心的概念，就是状态转移方程，这是做动态规划类问题最重要的一个步骤，也是最抽象的一个步骤，我们能想到状态转移方程就代表这道题我们理解了大半了，我们由斐波那契数列入手来引出这个概念。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fib</span> (<span class="params">i</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (N == <span class="number">1</span> || N == <span class="number">2</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> fib(N - <span class="number">1</span>) + fib(N - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>很简单吧，直接暴力递归，但是贼低效，鲁迅说过“所有递归问题都可以看作是树问题”，那我们就看看这个递归调用时的树，假设i = 20;<br><img src="/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/fib.png" alt="fib"><br>看看时间复杂度？O(2^n)，直接裂开来，而且你会发现有大量的重复计算，比如f(18)和f(17)都被计算了两次，更往下的子节点被重复计算的次数更多，这就是之前提到的<strong>重叠子问题</strong>，所以为了解决这个问题，我们引入一个备忘录。</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fib</span> (<span class="params">n</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> dp = <span class="keyword">new</span> <span class="built_in">Array</span>(n + <span class="number">1</span>).fill(<span class="number">0</span>)</span><br><span class="line">  dp[<span class="number">1</span>] = dp [<span class="number">2</span>] = <span class="number">1</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">3</span>; i &lt;= n - <span class="number">1</span>; i++)</span><br><span class="line">    dp[i] = dp[i - <span class="number">1</span>] +  dp[i - <span class="number">2</span>]</span><br><span class="line">  <span class="keyword">return</span> dp[n]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这我们可以得知，我们知道这是第n代的兔子，让我们去求第n代兔子的总数，也就是dp(n),并且dp(n) = dp(n-1) + dp(n-2)，哎，那求dp(n)的问题是不是就转移到求dp(n-1) + dp(n-2)了，这个就叫状态转移方程，当然不要忘了n = 1 和n = 2的情况。综上，我们得到斐波那契数列的状态转移方程</p>
-<p>dp(n) = { 1,  n = 1,2<br>{dp(n-1) + dp(n-2), n &gt; 2</p>
-<p>这里解决了<strong>重叠子问题</strong>，那动态规划另一个重要特性<strong>最优子结构</strong>呢？<br>因为斐波那契不算真正的动态规划问题，写这个主要是为了引入如何抽象出状态转移方程，对于最优子结构，让我们往下看。</p>
-<h2 id="典中典的凑硬币"><a href="#典中典的凑硬币" class="headerlink" title="典中典的凑硬币"></a>典中典的凑硬币</h2><p>说起动态规划就不得不提凑硬币的问题，太经典了属于是。再说凑硬币问题前我们简单聊一聊贪心算法，贪心算法其实是动态规划的一个特例，动态规划是一只分分分分分到最后找出最优解，而贪心是先分解若干个子问题，找出最优，再从这个最优子问题中接着分解，也就是说<strong>贪心算法是每一都要求出最优解的动态规划问题</strong>。<br>这里说回来凑硬币问题，比如我们有面值为1，5，11元的硬币，要求凑出15元所用的最少硬币数。用贪心的话就是，第一步的最优解肯定是面值最大的11元，然后还差四元就需要用四枚一元硬币，一共五枚。而这道题真正的最优解其实是三枚五元硬币，这样就能看出贪心和动态规划的区别了。<br>那么这道题我们该如何思考呢？又或者是说怎么列出状态转移方程？仔细思考一下，我们之前有提到过动态分解到最小子问题后往上递归，也就是“自低而上”的思维，那这个问题的最底部显然就是0个硬币凑0元，再往上也就是一个硬币， 也就是凑了1，5，11元还剩14，10，4元，分别需要 dp[14]+1,dp[10]+1,dp[4]+1个，（这里dp[n]是凑n元需要的硬币数，这里因为要求最少硬币数，所以需要在dp[14],dp[10],dp[1]中找出最优的情况，所以底层往上的第一步，就是<br>dp[15] = min(dp[15-1],dp[15-5],dp[15-10])+1,这里15由未知数代替，考虑边界情况，也就是n&lt;=0的情况，那我们不就能得到状态转移方程了？<br>dp[n] = { 0 ,n&lt;=0<br>{min(dp[15 - coin]), n&gt;0<br>得到状态转移方程，再用自底而上的思维，得出代码</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> changeCoin = <span class="function">(<span class="params">coins,amount</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 初始化备忘录,用Infinity填满备忘录，Infinity说明该值不可以用硬币凑出来</span></span><br><span class="line">  <span class="keyword">let</span> dp = newArray(amount + <span class="number">1</span>).fill(<span class="literal">Infinity</span>)</span><br><span class="line">  dp[<span class="number">0</span>] = [<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= amount; i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">const</span> coin <span class="keyword">of</span> coins)&#123;</span><br><span class="line">            <span class="keyword">if</span>(coin &lt;= i)</span><br><span class="line">        dp[i] = <span class="built_in">Math</span>.min(dp[i], dp[i - coin] + <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[amount] === <span class="literal">Infinity</span> ? -<span class="number">1</span> : dp[amount]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样就结束啦！<br>那么最后，怎样判断一个问题是不是动态规划问题呢？<br>一般有</p>
-<ul>
-<li>求最大值，最小值</li>
-<li>判断方案是否可行</li>
-<li>统计方案个数</li>
-<li>子问题是否满足最优子结构，即每个子问题都不影响其他子问题</li>
-</ul>
-<h1 id="回溯算法"><a href="#回溯算法" class="headerlink" title="回溯算法"></a>回溯算法</h1><p>看完动态规划，我们就简单说一下回溯，回溯重点就是这个“回”字，他从本质上来说就是遍历决策树的过程，我们需要抓住这三点：</p>
-<ul>
-<li>路径 也就是做过的选择</li>
-<li>选择列表 当前可以选择的部分</li>
-<li>结束条件 到达决策树底部，没有新的选择</li>
-</ul>
-<p>回溯是有框架的</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">result = []</span><br><span class="line">def backtrack(路径, 选择列表): <span class="keyword">if</span> 满足结束条件:</span><br><span class="line">result.add(路径) <span class="keyword">return</span></span><br><span class="line"><span class="keyword">for</span> 选择 <span class="keyword">in</span> 选择列表: 做选择</span><br><span class="line">backtrack(路径, 选择列表) 撤销选择</span><br></pre></td></tr></table></figure>
-<p>可以看到 这串代码的核心是，递归调用 backtrack，并且在递归之前做选择，递归之后撤销选择就行。</p>
-<h2 id="全排列"><a href="#全排列" class="headerlink" title="全排列"></a>全排列</h2><p>最基本的回溯问题就是全排列问题了，就比如给我们【1，2，3】三个数字，求出他们不重复情况的全排列，可以得到以下决策树<br><img src="/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/jueceshu.png" alt="jcs"><br>我们站在决策树的顶端，此时我们的选择列表是【1，2，3】，没有路径，因为我们还没做过选择，假设我们选择2后到达第二个节点，那么我们的选择列表是【1，3】，2就变成了我们的路径，然后 backtrack函数，就像是个指针，在这个树上游走，要维护每个节点的选择列表和路径，当它走到树的底层后，就触发了结束条件。<br>再然后，如何遍历一个树？ 要记住，所有搜索问题其实都是树的遍历问题，而多叉树的遍历，有两个重要框架，前序遍历和后序遍历，前序遍历在递归进入下一个节点前进行，后续遍历在进入一个节点后执行，前序遍历让多叉树得以向某一子节点递归，后序遍历可以让多叉树依次对多个子节点递归遍历，依照这个思路以及前面的框架，我们得出全排列代码</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> allSort = <span class="function">(<span class="params">nums</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> res = []</span><br><span class="line">  backTrack = <span class="function">(<span class="params">path</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="comment">// 判断是否满足结束条件</span></span><br><span class="line">    <span class="keyword">if</span>(nums.length === path.length)&#123;</span><br><span class="line">      res.push([...path])  </span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解决重复路径</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; nums.length; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(path.indexOf(nums[i]) !== -<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">/** 前序遍历 */</span></span><br><span class="line">      path.push(nums[i])</span><br><span class="line"></span><br><span class="line">      backTrack(path)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 后序遍历</span></span><br><span class="line">      path.pop()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  backTrack([])</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="N皇后问题"><a href="#N皇后问题" class="headerlink" title="N皇后问题"></a>N皇后问题</h2><p>这个也是回溯经典啊，单比全排列稍微复杂一丢丢，题目的意思就是给我们一个N x N的棋盘，在上面摆N个皇后，让这些皇后不能互相攻击，问我们有几种摆法。<br>然后写回溯问题，我们一定要想明白它的决策树，和写动态规划要想明白df方程是一样的。<br>对于N皇后的决策树，我们可以想决策树的每一层，就是棋盘上的每一行，然后那一层的每一个节点，对应的就是棋盘上那一行的每个列。<br>直接套用上面框架</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> Queen = <span class="function">(<span class="params">n</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> board = <span class="keyword">new</span> <span class="built_in">Array</span>(n).fill(<span class="string">&#x27;.&#x27;</span>.repeat(n))</span><br><span class="line">  <span class="keyword">let</span> res = []</span><br><span class="line">  isValid = <span class="function">(<span class="params">board, row, col</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> len = board.length</span><br><span class="line">    <span class="comment">//检查列皇后是否冲突</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][col] === <span class="string">&#x27;Q&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查左对角线冲突</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>,j = col + <span class="number">1</span>; i &gt;= <span class="number">0</span> &amp;&amp; j &lt; n; i--, j++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][j] === <span class="string">&#x27;Q&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查右对角线冲突，</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>,j = col - <span class="number">1</span>; i &gt;= <span class="number">0</span> &amp;&amp; j &gt;= <span class="number">0</span>; i--, j--)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][j] === <span class="string">&#x27;Q&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  repalceAt = <span class="function">(<span class="params">str,index,target</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="keyword">const</span> strAry = str.split(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    strAry[index] = target</span><br><span class="line">    <span class="keyword">return</span> strAry.join(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  backTrack = <span class="function">(<span class="params">board, row</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="comment">// 终止条件</span></span><br><span class="line">    <span class="keyword">if</span>(row === board.length)&#123;</span><br><span class="line">      res.push([...board])</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> len = board.length</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> col = <span class="number">0</span>; col &lt; len; col++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(!isValid(board,row,col))&#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">       </span><br><span class="line">      <span class="comment">//前序</span></span><br><span class="line">      board[row] = repalceAt(board[row],col,<span class="string">&#x27;Q&#x27;</span>)</span><br><span class="line"></span><br><span class="line">      backTrack(board, row + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">      <span class="comment">//后序</span></span><br><span class="line">      board[row] =repalceAt(board[row],col,<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;  </span><br><span class="line">  backTrack(board,<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="回溯和动态规划"><a href="#回溯和动态规划" class="headerlink" title="回溯和动态规划"></a>回溯和动态规划</h2><p>至此回溯就简单的说到这了啊<br>这里我们看到回溯和动态规划的联系和区别，联系就是，二者都需要通过穷举来解题，但动态规划需要通过备忘录解决重叠子问题来优化并找出最佳答案，而回溯就算真正的暴力求解了。</p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>高阶组件</title>
-    <url>/2021/09/13/%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6/</url>
-    <content><![CDATA[<p>呜呜呜介绍一下高阶组件</p>
-<span id="more"></span>
-
-<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>这里直接看官方文档: <strong>高阶组件（HOC）是 React 中用于复用组件逻辑的一种高级技巧。HOC 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的设计模式。具体而言，高阶组件是参数为组件，返回值为新组件的函数。</strong><br>组件是将 props 转换为 UI，而高阶组件是将组件转换为另一个组件。</p>
-<p>官方文档用了一个demo解释了一下，这里我就说个大概，就是当我们需要两个组件，一个是CommentList用于获取用户评论，一个是BlogPost用于订阅单篇博客，他们都共享<strong>订阅数据————渲染————取消订阅</strong>这么一个逻辑，这样我们就可以把这个公共逻辑抽象成一个函数，这个函数就是一个<strong>高阶组件</strong>，因为这个函数接受了一个普通组件作为参数返回了一个有着订阅逻辑后的新组件，直接上代码: (这里我随便写写，跟官方不一样了)</p>
-<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 原本组件逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CommentList</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [data, setData] = useState()</span><br><span class="line">  useEffect(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    DataSource.getComment(handleChange())<span class="comment">//获取订阅</span></span><br><span class="line">    <span class="keyword">return</span> DataSource.removeComment(handleChange())<span class="comment">//清除订阅</span></span><br><span class="line">  &#125;)</span><br><span class="line">  handleChange = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setData(data)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">onClick</span>=<span class="string">&#123;handleChange&#125;</span>&gt;</span>&#123;data&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">BlogPost</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [data, setData] = useState()</span><br><span class="line">  useEffect(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    DataSource.getBlog(handleChange())<span class="comment">//获取订阅</span></span><br><span class="line">    <span class="keyword">return</span> DataSource.removeBlog(handleChange())<span class="comment">//清除订阅</span></span><br><span class="line">  &#125;)</span><br><span class="line">  handleChange = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setData(data)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">onClick</span>=<span class="string">&#123;handleChange&#125;</span>&gt;</span>&#123;data&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 高阶组件函数</span></span><br><span class="line"></span><br><span class="line">getDataComp = <span class="function">(<span class="params">Comp, getDataType,removeDataType</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> [data, setData] = useState()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      DataSource.getDataType()</span><br><span class="line">      <span class="keyword">return</span> DataSource.removeDateType()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleChange = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setData(data)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Comp</span> <span class="attr">data</span>=<span class="string">&#123;state.data&#125;</span> <span class="attr">props</span>=<span class="string">&#123;...props&#125;/</span>&gt;</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里的订阅数据就会作为props传递了，可能这里我写的没有很明白，那就还是可以去官方文档看看。<br>然后高阶组件是纯函数，绝不要在高阶组件中修改原组件模型，并且要将不向关的props传给被包裹的组件，大多数 HOC 都应该包含一个类似于下面的 render 方法：</p>
-<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  <span class="comment">// 过滤掉非此 HOC 额外的 props，且不要进行透传</span></span><br><span class="line">  <span class="keyword">const</span> &#123; extraProp, ...passThroughProps &#125; = <span class="built_in">this</span>.props;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将 props 注入到被包装的组件中。</span></span><br><span class="line">  <span class="comment">// 通常为 state 的值或者实例方法。</span></span><br><span class="line">  <span class="keyword">const</span> injectedProp = someStateOrInstanceMethod;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将 props 传递给被包装组件</span></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">      <span class="attr">injectedProp</span>=<span class="string">&#123;injectedProp&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">      &#123;<span class="attr">...passThroughProps</span>&#125;</span></span></span><br><span class="line"><span class="tag"><span class="xml">    /&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>mad 写着写着突然发现，自定义hook是不是可以代替高阶组件和 render props？？？哇日！？我麻了我麻了我麻了<br>这东西可以深挖，先放一放</p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>react</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>动画与Canvas图形</title>
-    <url>/2021/09/26/%E5%8A%A8%E7%94%BB%E4%B8%8ECanvas%E5%9B%BE%E5%BD%A2/</url>
-    <content><![CDATA[<p>这篇博客记录下红宝书上的canvas和动画</p>
-<span id="more"></span>
-
-<h1 id="Js动画"><a href="#Js动画" class="headerlink" title="Js动画"></a>Js动画</h1><p>早起的Js动画只能用定时器写，结合css的animation和transition来完成，但定时器在浏览器的时间精度是个问题，就会造成动画不流畅，延时等问题，所以这里就有新的API来解决这个问题</p>
-<h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><p>requesetAnimationFrame()，该接口的参数是一个函数(就是用于执行动画的函数)，该接口的作用就是通知浏览器“我要放一个动画你麻溜的准备好”，然后调用参数函数来精确的完成动画。然后参数函数是一个要在重绘屏幕前调用的函数，这个函数就是修改DOM样式以及反映下一次重绘有什么变化的地方。为了实现动画循环，可以再该函数内部再次调用requesetAnimationFrame()。<br>至此，该API解决了浏览器不知道Js何时开始动画的问题，然后在调用requesetAnimationFrame()时还给执行动画的函数传递一个DOMHighResTimeStamp函数，就是一个时间戳，表示下次重绘的时间，这一点非常重要，requesetAnimationFrame()把重绘任务安排再了未来一个已知的时间点上，而且通过这个参数告诉了开发者。</p>
-<p>然后requesetAnimationFrame()的返回值和setTimeout()类似，返回一个请求ID，通过cancelAnimationFrame()来取消重绘任务</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> updateProgress = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> div = <span class="built_in">document</span>.getElementById(<span class="string">&quot;status&quot;</span>);</span><br><span class="line">  div.style.width = (<span class="built_in">parseInt</span>(div.style.width, <span class="number">10</span>) + <span class="number">5</span>) + <span class="string">&#x27;%&#x27;</span></span><br><span class="line">  <span class="keyword">if</span> (div.style.left != <span class="string">&quot;100%&quot;</span>) &#123;</span><br><span class="line">    requesetAnimationFrame(updateProgress)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">requesetAnimationFrame(updateProgress) </span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> id = requesetAnimationFrame(updateProgress) </span><br><span class="line"></span><br><span class="line">cancelAnimationFrame(id)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>在使用requesetAnimationFrame()要注意节流的使用</strong></p>
-<h1 id="Canvas"><a href="#Canvas" class="headerlink" title="Canvas"></a>Canvas</h1><p>canvas是html的标签元素，写它的时候要声明id,width和height</p>
-<h2 id="相关API"><a href="#相关API" class="headerlink" title="相关API"></a>相关API</h2><h3 id="基础API"><a href="#基础API" class="headerlink" title="基础API"></a>基础API</h3><ul>
-<li>getContext() 获取绘图上下文，比如传参’2d’，就表示要获取2D上下文对象</li>
-<li>toDataURL() 导出canvas元素上的图像</li>
-</ul>
-<h3 id="绘制矩形"><a href="#绘制矩形" class="headerlink" title="绘制矩形"></a>绘制矩形</h3><p>对于2d上下文对象，会建一个坐标系，然后根据坐标来绘图<br>坐标原点在canvas元素的左上角，然后width和height就限定了坐标的最大值，2d绘图有两个基本操作，填充和描边</p>
-<ul>
-<li>strokeStyle() 用于描边</li>
-<li>fillStyle() 用于填充<br>绘制矩形的API，都接受四个参数，分别是起始x,y坐标和宽度高度</li>
-<li>fillRect() 填充矩形</li>
-<li>strokeRect() 绘制矩形边框</li>
-<li>clearRect() 擦除指定区域</li>
-</ul>
-<h3 id="绘制路径的API"><a href="#绘制路径的API" class="headerlink" title="绘制路径的API"></a>绘制路径的API</h3><ul>
-<li>beginPath() 表示开始绘制路径</li>
-<li>closePath() 表示关闭绘制路径 图形绘制命令又重新指向到上下文中</li>
-<li>stroke() 通过线条来绘制图形轮廓</li>
-<li>fill() 通过填充路径的内容区域生成实心的图形<br>意思就是 创建路径之后，可以用closePath()方法绘制一条返回起点的线，如果路径已经完成，就可以用fill()或者stroke()方法来描画路径，还可以调用clip()方法基于已有路径创建一个新剪切区域。</li>
-<li>arc() 绘制弧线，参数啥的去MDN查吧，</li>
-<li>arcTo() </li>
-<li>bezierCurveTo() 三次贝塞尔曲线</li>
-<li>quadraticCurveTo() 二次贝塞尔曲线</li>
-<li>rect() 绘制矩形 与前面的矩形相关API的区别是绘制路径和绘制图形</li>
-<li><strong>lineTo(x,y)</strong> 绘制一条从上一点到(x,y)的直线</li>
-<li><strong>moveTo(x,y)</strong> 不绘制线条，只把绘制光标移动到(x,y)<br>还有个isPointInPath(x,y)方法帮我们判断目前路径是否在某点(x,y)上</li>
-</ul>
-<h3 id="绘制文本"><a href="#绘制文本" class="headerlink" title="绘制文本"></a>绘制文本</h3><p>绘制文本的方法，都接受四个参数,要绘制的字符串，x坐标，y坐标，和可选的最大像素宽度。</p>
-<ul>
-<li>fillText()</li>
-<li>strokeText()</li>
-</ul>
-<p>这两个方法最终绘制都取决于以下属性</p>
-<ul>
-<li>font: css语法指定的字体样式</li>
-<li>textAlign: 指定文本对齐方式</li>
-<li>textBaseLine: 指定文本的基线</li>
-</ul>
-<p>用measureText()获得文本的宽度</p>
-<h3 id="变换、"><a href="#变换、" class="headerlink" title="变换、"></a>变换、</h3><p>。。。<br>写不下去了<br>太多API了赣</p>
-]]></content>
-      <categories>
-        <category>笔记</category>
-      </categories>
-      <tags>
-        <tag>js</tag>
       </tags>
   </entry>
   <entry>
@@ -1439,6 +1295,151 @@
       </categories>
       <tags>
         <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>react源码初探</title>
+    <url>/2021/09/15/react%E6%BA%90%E7%A0%81%E5%88%9D%E6%8E%A2/</url>
+    <content><![CDATA[<p>总算到这一步了 看react源码部分的笔记</p>
+<span id="more"></span>
+
+<h1 id="Virtual-DOM"><a href="#Virtual-DOM" class="headerlink" title="Virtual DOM"></a>Virtual DOM</h1><p>Virtual DOM 是 React 的核心与精髓所在,React就是靠着VDOM和高效的diff算法大量减少了渲染DOM的代价。<br>VDOM中转换成浏览器中真实的DOM树，即VDOM其实也存在于树这种数据结构中，那他就会有自己的节点，他的节点被称为 ReactNode， 分为3种类型 ReactElement、ReactFragment 和ReactText，其中，ReactElement 又分为 ReactComponentElement 和 ReactDOMElement。<br>先看看这些类型源码，涉及到Ts部分、</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ReactNode = ReactElement | ReactFragment | ReactText;</span><br><span class="line"><span class="keyword">type</span> ReactElement = ReactComponentElement | ReactDOMElement;</span><br><span class="line"><span class="keyword">type</span> ReactDOMElement = &#123; <span class="attr">type</span> : <span class="built_in">string</span>,</span><br><span class="line"><span class="attr">props</span> : &#123;</span><br><span class="line"><span class="attr">children</span> : ReactNodeList, <span class="attr">className</span> : <span class="built_in">string</span>,</span><br><span class="line">etc.</span><br><span class="line">&#125;,</span><br><span class="line"><span class="attr">key</span> : <span class="built_in">string</span> | <span class="built_in">boolean</span> | <span class="built_in">number</span> | <span class="literal">null</span>, <span class="attr">ref</span> : <span class="built_in">string</span> | <span class="literal">null</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">type</span> ReactComponentElement&lt;TProps&gt; = &#123; <span class="attr">type</span> : ReactClass&lt;TProps&gt;,</span><br><span class="line">props : TProps,</span><br><span class="line"><span class="attr">key</span> : <span class="built_in">string</span> | <span class="built_in">boolean</span> | <span class="built_in">number</span> | <span class="literal">null</span>, <span class="attr">ref</span> : <span class="built_in">string</span> | <span class="literal">null</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">type</span> ReactFragment = <span class="built_in">Array</span>&lt;ReactNode | ReactEmpty&gt;; <span class="keyword">type</span> ReactNodeList = ReactNode | ReactEmpty;</span><br><span class="line"><span class="keyword">type</span> ReactText = <span class="built_in">string</span> | <span class="built_in">number</span>;</span><br><span class="line"><span class="keyword">type</span> ReactEmpty = <span class="literal">null</span> | <span class="literal">undefined</span> | <span class="built_in">boolean</span>;</span><br></pre></td></tr></table></figure>
+<p>然后我们写JSX的时候，react会帮我吗掉createElement方法构造虚拟节点，这是个蛮重要的部分，直接上代码</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><span class="line"><span class="comment">// createElement 只是做了简单的参数修正，返回一个 ReactElement 实例对象， // 也就是虚拟元素的实例</span></span><br><span class="line">ReactElement.createElement = <span class="function"><span class="keyword">function</span>(<span class="params"><span class="keyword">type</span>, config, children</span>) </span>&#123;</span><br><span class="line"><span class="comment">// 初始化参数</span></span><br><span class="line"><span class="keyword">var</span> propName;</span><br><span class="line"><span class="keyword">var</span> props = &#123;&#125;; </span><br><span class="line"><span class="keyword">var</span> key = <span class="literal">null</span>; </span><br><span class="line"><span class="keyword">var</span> ref = <span class="literal">null</span>; </span><br><span class="line"><span class="keyword">var</span> self = <span class="literal">null</span>; </span><br><span class="line"><span class="keyword">var</span> source = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果存在 config，则提取里面的内容 if (config != null) &#123;</span></span><br><span class="line"><span class="keyword">if</span> (config != <span class="literal">null</span>) &#123;</span><br><span class="line">  ref = config.ref === <span class="literal">undefined</span> ? <span class="literal">null</span> : config.ref;</span><br><span class="line">  key = config.key === <span class="literal">undefined</span> ? <span class="literal">null</span> : <span class="string">&#x27;&#x27;</span> + config.key;</span><br><span class="line">  self = config.__self === <span class="literal">undefined</span> ? <span class="literal">null</span> : config.__self; </span><br><span class="line">  source = config.__source === <span class="literal">undefined</span> ? <span class="literal">null</span> : config.__source; </span><br><span class="line"><span class="comment">// 复制 config 里的内容到 props(如 id 和 className 等)</span></span><br><span class="line">  <span class="keyword">for</span> (propName <span class="keyword">in</span> config) &#123;</span><br><span class="line">    <span class="keyword">if</span> (config.hasOwnProperty(propName) &amp;&amp; !RESERVED_PROPS.hasOwnProperty(propName)) &#123;</span><br><span class="line">      props[propName] = config[propName];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 处理 children，全部挂载到 props 的 children 属性上。如果只有一个参数，直接赋值给 children， // 否则做合并处理</span></span><br><span class="line"><span class="keyword">var</span> childrenLength = <span class="built_in">arguments</span>.length - <span class="number">2</span>;</span><br><span class="line"><span class="keyword">if</span> (childrenLength === <span class="number">1</span>) &#123;</span><br><span class="line">  props.children = children;</span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (childrenLength &gt; <span class="number">1</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> childArray = <span class="built_in">Array</span>(childrenLength); </span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; childrenLength; i++) &#123;</span><br><span class="line">    childArray[i] = <span class="built_in">arguments</span>[i + <span class="number">2</span>]; </span><br><span class="line">  &#125;</span><br><span class="line">  props.children = childArray; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果某个 prop 为空且存在默认的 prop，则将默认 prop 赋给当前的 prop </span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">type</span> &amp;&amp; <span class="keyword">type</span>.defaultProps) &#123;</span><br><span class="line">  <span class="keyword">var</span> defaultProps = <span class="keyword">type</span>.defaultProps;</span><br><span class="line">  <span class="keyword">for</span> (propName <span class="keyword">in</span> defaultProps) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> props[propName] === <span class="string">&#x27;undefined&#x27;</span>) &#123;</span><br><span class="line">       props[propName] = defaultProps[propName];</span><br><span class="line">    &#125; </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 返回一个 ReactElement 实例对象</span></span><br><span class="line"><span class="keyword">return</span> ReactElement(<span class="keyword">type</span>, key, ref, self, source, ReactCurrentOwner.current, props); &#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="创建组件"><a href="#创建组件" class="headerlink" title="创建组件"></a>创建组件</h2><p>Virtual DOM 模型通过 createElement 创建虚拟元素，那又是如何创建组件的呢?</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>react</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探动态规划/回溯</title>
+    <url>/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</url>
+    <content><![CDATA[<p>数据结构上刷算法… 好说歹说算是入门了</p>
+<span id="more"></span>
+
+<h1 id="何为动态规划"><a href="#何为动态规划" class="headerlink" title="何为动态规划"></a>何为动态规划</h1><p>怎么说呢，动态规划就是是一种分治的思想，换句话说，就是把一个大问题，拆分成小问题，再把小问题接着拆分，拆到无可再分的时候，会得到最小的子问题，而子问题的答案很轻松就能得到，根据这个答案递推回去，就能得到原本问题的答案，是一种自底而上的做法。（当然也有自顶而下的方法）。动态规划核心套路是“穷举求最优解”，然后利用状态转移方程进行<strong>正确的穷举</strong>，也就是取消重叠子问题。<br>即，动态规划分治穷举后，两个重要特性就是 <strong>重叠子问题</strong>和<strong>最优子结构</strong></p>
+<h2 id="状态转移方程"><a href="#状态转移方程" class="headerlink" title="状态转移方程"></a>状态转移方程</h2><p>刚刚提到一个核心的概念，就是状态转移方程，这是做动态规划类问题最重要的一个步骤，也是最抽象的一个步骤，我们能想到状态转移方程就代表这道题我们理解了大半了，我们由斐波那契数列入手来引出这个概念。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fib</span> (<span class="params">i</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (N == <span class="number">1</span> || N == <span class="number">2</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> fib(N - <span class="number">1</span>) + fib(N - <span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很简单吧，直接暴力递归，但是贼低效，鲁迅说过“所有递归问题都可以看作是树问题”，那我们就看看这个递归调用时的树，假设i = 20;<br><img src="/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/fib.png" alt="fib"><br>看看时间复杂度？O(2^n)，直接裂开来，而且你会发现有大量的重复计算，比如f(18)和f(17)都被计算了两次，更往下的子节点被重复计算的次数更多，这就是之前提到的<strong>重叠子问题</strong>，所以为了解决这个问题，我们引入一个备忘录。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fib</span> (<span class="params">n</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> dp = <span class="keyword">new</span> <span class="built_in">Array</span>(n + <span class="number">1</span>).fill(<span class="number">0</span>)</span><br><span class="line">  dp[<span class="number">1</span>] = dp [<span class="number">2</span>] = <span class="number">1</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">3</span>; i &lt;= n - <span class="number">1</span>; i++)</span><br><span class="line">    dp[i] = dp[i - <span class="number">1</span>] +  dp[i - <span class="number">2</span>]</span><br><span class="line">  <span class="keyword">return</span> dp[n]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这我们可以得知，我们知道这是第n代的兔子，让我们去求第n代兔子的总数，也就是dp(n),并且dp(n) = dp(n-1) + dp(n-2)，哎，那求dp(n)的问题是不是就转移到求dp(n-1) + dp(n-2)了，这个就叫状态转移方程，当然不要忘了n = 1 和n = 2的情况。综上，我们得到斐波那契数列的状态转移方程</p>
+<p>dp(n) = { 1,  n = 1,2<br>{dp(n-1) + dp(n-2), n &gt; 2</p>
+<p>这里解决了<strong>重叠子问题</strong>，那动态规划另一个重要特性<strong>最优子结构</strong>呢？<br>因为斐波那契不算真正的动态规划问题，写这个主要是为了引入如何抽象出状态转移方程，对于最优子结构，让我们往下看。</p>
+<h2 id="典中典的凑硬币"><a href="#典中典的凑硬币" class="headerlink" title="典中典的凑硬币"></a>典中典的凑硬币</h2><p>说起动态规划就不得不提凑硬币的问题，太经典了属于是。再说凑硬币问题前我们简单聊一聊贪心算法，贪心算法其实是动态规划的一个特例，动态规划是一只分分分分分到最后找出最优解，而贪心是先分解若干个子问题，找出最优，再从这个最优子问题中接着分解，也就是说<strong>贪心算法是每一都要求出最优解的动态规划问题</strong>。<br>这里说回来凑硬币问题，比如我们有面值为1，5，11元的硬币，要求凑出15元所用的最少硬币数。用贪心的话就是，第一步的最优解肯定是面值最大的11元，然后还差四元就需要用四枚一元硬币，一共五枚。而这道题真正的最优解其实是三枚五元硬币，这样就能看出贪心和动态规划的区别了。<br>那么这道题我们该如何思考呢？又或者是说怎么列出状态转移方程？仔细思考一下，我们之前有提到过动态分解到最小子问题后往上递归，也就是“自低而上”的思维，那这个问题的最底部显然就是0个硬币凑0元，再往上也就是一个硬币， 也就是凑了1，5，11元还剩14，10，4元，分别需要 dp[14]+1,dp[10]+1,dp[4]+1个，（这里dp[n]是凑n元需要的硬币数，这里因为要求最少硬币数，所以需要在dp[14],dp[10],dp[1]中找出最优的情况，所以底层往上的第一步，就是<br>dp[15] = min(dp[15-1],dp[15-5],dp[15-10])+1,这里15由未知数代替，考虑边界情况，也就是n&lt;=0的情况，那我们不就能得到状态转移方程了？<br>dp[n] = { 0 ,n&lt;=0<br>{min(dp[15 - coin]), n&gt;0<br>得到状态转移方程，再用自底而上的思维，得出代码</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> changeCoin = <span class="function">(<span class="params">coins,amount</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 初始化备忘录,用Infinity填满备忘录，Infinity说明该值不可以用硬币凑出来</span></span><br><span class="line">  <span class="keyword">let</span> dp = newArray(amount + <span class="number">1</span>).fill(<span class="literal">Infinity</span>)</span><br><span class="line">  dp[<span class="number">0</span>] = [<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= amount; i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">const</span> coin <span class="keyword">of</span> coins)&#123;</span><br><span class="line">            <span class="keyword">if</span>(coin &lt;= i)</span><br><span class="line">        dp[i] = <span class="built_in">Math</span>.min(dp[i], dp[i - coin] + <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dp[amount] === <span class="literal">Infinity</span> ? -<span class="number">1</span> : dp[amount]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就结束啦！<br>那么最后，怎样判断一个问题是不是动态规划问题呢？<br>一般有</p>
+<ul>
+<li>求最大值，最小值</li>
+<li>判断方案是否可行</li>
+<li>统计方案个数</li>
+<li>子问题是否满足最优子结构，即每个子问题都不影响其他子问题</li>
+</ul>
+<h1 id="回溯算法"><a href="#回溯算法" class="headerlink" title="回溯算法"></a>回溯算法</h1><p>看完动态规划，我们就简单说一下回溯，回溯重点就是这个“回”字，他从本质上来说就是遍历决策树的过程，我们需要抓住这三点：</p>
+<ul>
+<li>路径 也就是做过的选择</li>
+<li>选择列表 当前可以选择的部分</li>
+<li>结束条件 到达决策树底部，没有新的选择</li>
+</ul>
+<p>回溯是有框架的</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">result = []</span><br><span class="line">def backtrack(路径, 选择列表): <span class="keyword">if</span> 满足结束条件:</span><br><span class="line">result.add(路径) <span class="keyword">return</span></span><br><span class="line"><span class="keyword">for</span> 选择 <span class="keyword">in</span> 选择列表: 做选择</span><br><span class="line">backtrack(路径, 选择列表) 撤销选择</span><br></pre></td></tr></table></figure>
+<p>可以看到 这串代码的核心是，递归调用 backtrack，并且在递归之前做选择，递归之后撤销选择就行。</p>
+<h2 id="全排列"><a href="#全排列" class="headerlink" title="全排列"></a>全排列</h2><p>最基本的回溯问题就是全排列问题了，就比如给我们【1，2，3】三个数字，求出他们不重复情况的全排列，可以得到以下决策树<br><img src="/2021/09/15/%E5%88%9D%E6%8E%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/jueceshu.png" alt="jcs"><br>我们站在决策树的顶端，此时我们的选择列表是【1，2，3】，没有路径，因为我们还没做过选择，假设我们选择2后到达第二个节点，那么我们的选择列表是【1，3】，2就变成了我们的路径，然后 backtrack函数，就像是个指针，在这个树上游走，要维护每个节点的选择列表和路径，当它走到树的底层后，就触发了结束条件。<br>再然后，如何遍历一个树？ 要记住，所有搜索问题其实都是树的遍历问题，而多叉树的遍历，有两个重要框架，前序遍历和后序遍历，前序遍历在递归进入下一个节点前进行，后续遍历在进入一个节点后执行，前序遍历让多叉树得以向某一子节点递归，后序遍历可以让多叉树依次对多个子节点递归遍历，依照这个思路以及前面的框架，我们得出全排列代码</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> allSort = <span class="function">(<span class="params">nums</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> res = []</span><br><span class="line">  backTrack = <span class="function">(<span class="params">path</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="comment">// 判断是否满足结束条件</span></span><br><span class="line">    <span class="keyword">if</span>(nums.length === path.length)&#123;</span><br><span class="line">      res.push([...path])  </span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解决重复路径</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; nums.length; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(path.indexOf(nums[i]) !== -<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">/** 前序遍历 */</span></span><br><span class="line">      path.push(nums[i])</span><br><span class="line"></span><br><span class="line">      backTrack(path)</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 后序遍历</span></span><br><span class="line">      path.pop()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  backTrack([])</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="N皇后问题"><a href="#N皇后问题" class="headerlink" title="N皇后问题"></a>N皇后问题</h2><p>这个也是回溯经典啊，单比全排列稍微复杂一丢丢，题目的意思就是给我们一个N x N的棋盘，在上面摆N个皇后，让这些皇后不能互相攻击，问我们有几种摆法。<br>然后写回溯问题，我们一定要想明白它的决策树，和写动态规划要想明白df方程是一样的。<br>对于N皇后的决策树，我们可以想决策树的每一层，就是棋盘上的每一行，然后那一层的每一个节点，对应的就是棋盘上那一行的每个列。<br>直接套用上面框架</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> Queen = <span class="function">(<span class="params">n</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> board = <span class="keyword">new</span> <span class="built_in">Array</span>(n).fill(<span class="string">&#x27;.&#x27;</span>.repeat(n))</span><br><span class="line">  <span class="keyword">let</span> res = []</span><br><span class="line">  isValid = <span class="function">(<span class="params">board, row, col</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> len = board.length</span><br><span class="line">    <span class="comment">//检查列皇后是否冲突</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][col] === <span class="string">&#x27;Q&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查左对角线冲突</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>,j = col + <span class="number">1</span>; i &gt;= <span class="number">0</span> &amp;&amp; j &lt; n; i--, j++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][j] === <span class="string">&#x27;Q&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查右对角线冲突，</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = row - <span class="number">1</span>,j = col - <span class="number">1</span>; i &gt;= <span class="number">0</span> &amp;&amp; j &gt;= <span class="number">0</span>; i--, j--)&#123;</span><br><span class="line">      <span class="keyword">if</span>(board[i][j] === <span class="string">&#x27;Q&#x27;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  repalceAt = <span class="function">(<span class="params">str,index,target</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="keyword">const</span> strAry = str.split(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    strAry[index] = target</span><br><span class="line">    <span class="keyword">return</span> strAry.join(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  backTrack = <span class="function">(<span class="params">board, row</span>) =&gt;</span> &#123; </span><br><span class="line">    <span class="comment">// 终止条件</span></span><br><span class="line">    <span class="keyword">if</span>(row === board.length)&#123;</span><br><span class="line">      res.push([...board])</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> len = board.length</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> col = <span class="number">0</span>; col &lt; len; col++)&#123;</span><br><span class="line">      <span class="keyword">if</span>(!isValid(board,row,col))&#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">       </span><br><span class="line">      <span class="comment">//前序</span></span><br><span class="line">      board[row] = repalceAt(board[row],col,<span class="string">&#x27;Q&#x27;</span>)</span><br><span class="line"></span><br><span class="line">      backTrack(board, row + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">      <span class="comment">//后序</span></span><br><span class="line">      board[row] =repalceAt(board[row],col,<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;  </span><br><span class="line">  backTrack(board,<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="回溯和动态规划"><a href="#回溯和动态规划" class="headerlink" title="回溯和动态规划"></a>回溯和动态规划</h2><p>至此回溯就简单的说到这了啊<br>这里我们看到回溯和动态规划的联系和区别，联系就是，二者都需要通过穷举来解题，但动态规划需要通过备忘录解决重叠子问题来优化并找出最佳答案，而回溯就算真正的暴力求解了。</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>动画与Canvas图形</title>
+    <url>/2021/09/26/%E5%8A%A8%E7%94%BB%E4%B8%8ECanvas%E5%9B%BE%E5%BD%A2/</url>
+    <content><![CDATA[<p>这篇博客记录下红宝书上的canvas和动画</p>
+<span id="more"></span>
+
+<h1 id="Js动画"><a href="#Js动画" class="headerlink" title="Js动画"></a>Js动画</h1><p>早起的Js动画只能用定时器写，结合css的animation和transition来完成，但定时器在浏览器的时间精度是个问题，就会造成动画不流畅，延时等问题，所以这里就有新的API来解决这个问题</p>
+<h2 id="requestAnimationFrame"><a href="#requestAnimationFrame" class="headerlink" title="requestAnimationFrame"></a>requestAnimationFrame</h2><p>requesetAnimationFrame()，该接口的参数是一个函数(就是用于执行动画的函数)，该接口的作用就是通知浏览器“我要放一个动画你麻溜的准备好”，然后调用参数函数来精确的完成动画。然后参数函数是一个要在重绘屏幕前调用的函数，这个函数就是修改DOM样式以及反映下一次重绘有什么变化的地方。为了实现动画循环，可以再该函数内部再次调用requesetAnimationFrame()。<br>至此，该API解决了浏览器不知道Js何时开始动画的问题，然后在调用requesetAnimationFrame()时还给执行动画的函数传递一个DOMHighResTimeStamp函数，就是一个时间戳，表示下次重绘的时间，这一点非常重要，requesetAnimationFrame()把重绘任务安排再了未来一个已知的时间点上，而且通过这个参数告诉了开发者。</p>
+<p>然后requesetAnimationFrame()的返回值和setTimeout()类似，返回一个请求ID，通过cancelAnimationFrame()来取消重绘任务</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> updateProgress = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> div = <span class="built_in">document</span>.getElementById(<span class="string">&quot;status&quot;</span>);</span><br><span class="line">  div.style.width = (<span class="built_in">parseInt</span>(div.style.width, <span class="number">10</span>) + <span class="number">5</span>) + <span class="string">&#x27;%&#x27;</span></span><br><span class="line">  <span class="keyword">if</span> (div.style.left != <span class="string">&quot;100%&quot;</span>) &#123;</span><br><span class="line">    requesetAnimationFrame(updateProgress)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">requesetAnimationFrame(updateProgress) </span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> id = requesetAnimationFrame(updateProgress) </span><br><span class="line"></span><br><span class="line">cancelAnimationFrame(id)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>在使用requesetAnimationFrame()要注意节流的使用</strong></p>
+<h1 id="Canvas"><a href="#Canvas" class="headerlink" title="Canvas"></a>Canvas</h1><p>canvas是html的标签元素，写它的时候要声明id,width和height</p>
+<h2 id="相关API"><a href="#相关API" class="headerlink" title="相关API"></a>相关API</h2><h3 id="基础API"><a href="#基础API" class="headerlink" title="基础API"></a>基础API</h3><ul>
+<li>getContext() 获取绘图上下文，比如传参’2d’，就表示要获取2D上下文对象</li>
+<li>toDataURL() 导出canvas元素上的图像</li>
+</ul>
+<h3 id="绘制矩形"><a href="#绘制矩形" class="headerlink" title="绘制矩形"></a>绘制矩形</h3><p>对于2d上下文对象，会建一个坐标系，然后根据坐标来绘图<br>坐标原点在canvas元素的左上角，然后width和height就限定了坐标的最大值，2d绘图有两个基本操作，填充和描边</p>
+<ul>
+<li>strokeStyle() 用于描边</li>
+<li>fillStyle() 用于填充<br>绘制矩形的API，都接受四个参数，分别是起始x,y坐标和宽度高度</li>
+<li>fillRect() 填充矩形</li>
+<li>strokeRect() 绘制矩形边框</li>
+<li>clearRect() 擦除指定区域</li>
+</ul>
+<h3 id="绘制路径的API"><a href="#绘制路径的API" class="headerlink" title="绘制路径的API"></a>绘制路径的API</h3><ul>
+<li>beginPath() 表示开始绘制路径</li>
+<li>closePath() 表示关闭绘制路径 图形绘制命令又重新指向到上下文中</li>
+<li>stroke() 通过线条来绘制图形轮廓</li>
+<li>fill() 通过填充路径的内容区域生成实心的图形<br>意思就是 创建路径之后，可以用closePath()方法绘制一条返回起点的线，如果路径已经完成，就可以用fill()或者stroke()方法来描画路径，还可以调用clip()方法基于已有路径创建一个新剪切区域。</li>
+<li>arc() 绘制弧线，参数啥的去MDN查吧，</li>
+<li>arcTo() </li>
+<li>bezierCurveTo() 三次贝塞尔曲线</li>
+<li>quadraticCurveTo() 二次贝塞尔曲线</li>
+<li>rect() 绘制矩形 与前面的矩形相关API的区别是绘制路径和绘制图形</li>
+<li><strong>lineTo(x,y)</strong> 绘制一条从上一点到(x,y)的直线</li>
+<li><strong>moveTo(x,y)</strong> 不绘制线条，只把绘制光标移动到(x,y)<br>还有个isPointInPath(x,y)方法帮我们判断目前路径是否在某点(x,y)上</li>
+</ul>
+<h3 id="绘制文本"><a href="#绘制文本" class="headerlink" title="绘制文本"></a>绘制文本</h3><p>绘制文本的方法，都接受四个参数,要绘制的字符串，x坐标，y坐标，和可选的最大像素宽度。</p>
+<ul>
+<li>fillText()</li>
+<li>strokeText()</li>
+</ul>
+<p>这两个方法最终绘制都取决于以下属性</p>
+<ul>
+<li>font: css语法指定的字体样式</li>
+<li>textAlign: 指定文本对齐方式</li>
+<li>textBaseLine: 指定文本的基线</li>
+</ul>
+<p>用measureText()获得文本的宽度</p>
+<h3 id="变换、"><a href="#变换、" class="headerlink" title="变换、"></a>变换、</h3><p>。。。<br>写不下去了<br>太多API了赣</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>高阶组件</title>
+    <url>/2021/09/13/%E9%AB%98%E9%98%B6%E7%BB%84%E4%BB%B6/</url>
+    <content><![CDATA[<p>呜呜呜介绍一下高阶组件</p>
+<span id="more"></span>
+
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>这里直接看官方文档: <strong>高阶组件（HOC）是 React 中用于复用组件逻辑的一种高级技巧。HOC 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的设计模式。具体而言，高阶组件是参数为组件，返回值为新组件的函数。</strong><br>组件是将 props 转换为 UI，而高阶组件是将组件转换为另一个组件。</p>
+<p>官方文档用了一个demo解释了一下，这里我就说个大概，就是当我们需要两个组件，一个是CommentList用于获取用户评论，一个是BlogPost用于订阅单篇博客，他们都共享<strong>订阅数据————渲染————取消订阅</strong>这么一个逻辑，这样我们就可以把这个公共逻辑抽象成一个函数，这个函数就是一个<strong>高阶组件</strong>，因为这个函数接受了一个普通组件作为参数返回了一个有着订阅逻辑后的新组件，直接上代码: (这里我随便写写，跟官方不一样了)</p>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 原本组件逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CommentList</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [data, setData] = useState()</span><br><span class="line">  useEffect(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    DataSource.getComment(handleChange())<span class="comment">//获取订阅</span></span><br><span class="line">    <span class="keyword">return</span> DataSource.removeComment(handleChange())<span class="comment">//清除订阅</span></span><br><span class="line">  &#125;)</span><br><span class="line">  handleChange = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setData(data)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">onClick</span>=<span class="string">&#123;handleChange&#125;</span>&gt;</span>&#123;data&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">BlogPost</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [data, setData] = useState()</span><br><span class="line">  useEffect(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    DataSource.getBlog(handleChange())<span class="comment">//获取订阅</span></span><br><span class="line">    <span class="keyword">return</span> DataSource.removeBlog(handleChange())<span class="comment">//清除订阅</span></span><br><span class="line">  &#125;)</span><br><span class="line">  handleChange = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setData(data)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">onClick</span>=<span class="string">&#123;handleChange&#125;</span>&gt;</span>&#123;data&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 高阶组件函数</span></span><br><span class="line"></span><br><span class="line">getDataComp = <span class="function">(<span class="params">Comp, getDataType,removeDataType</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> [data, setData] = useState()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      DataSource.getDataType()</span><br><span class="line">      <span class="keyword">return</span> DataSource.removeDateType()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleChange = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setData(data)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Comp</span> <span class="attr">data</span>=<span class="string">&#123;state.data&#125;</span> <span class="attr">props</span>=<span class="string">&#123;...props&#125;/</span>&gt;</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的订阅数据就会作为props传递了，可能这里我写的没有很明白，那就还是可以去官方文档看看。<br>然后高阶组件是纯函数，绝不要在高阶组件中修改原组件模型，并且要将不向关的props传给被包裹的组件，大多数 HOC 都应该包含一个类似于下面的 render 方法：</p>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  <span class="comment">// 过滤掉非此 HOC 额外的 props，且不要进行透传</span></span><br><span class="line">  <span class="keyword">const</span> &#123; extraProp, ...passThroughProps &#125; = <span class="built_in">this</span>.props;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将 props 注入到被包装的组件中。</span></span><br><span class="line">  <span class="comment">// 通常为 state 的值或者实例方法。</span></span><br><span class="line">  <span class="keyword">const</span> injectedProp = someStateOrInstanceMethod;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 将 props 传递给被包装组件</span></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">      <span class="attr">injectedProp</span>=<span class="string">&#123;injectedProp&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">      &#123;<span class="attr">...passThroughProps</span>&#125;</span></span></span><br><span class="line"><span class="tag"><span class="xml">    /&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>mad 写着写着突然发现，自定义hook是不是可以代替高阶组件和 render props？？？哇日！？我麻了我麻了我麻了<br>这东西可以深挖，先放一放</p>
+]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>react</tag>
       </tags>
   </entry>
   <entry>
