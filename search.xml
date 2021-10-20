@@ -627,7 +627,7 @@
 <span id="more"></span>
 <p>啥是UmiJs呢！？ 甭管他 我们先滚去了解 redux / redux-saga / dvajs</p>
 <h1 id="redux"><a href="#redux" class="headerlink" title="redux"></a>redux</h1><p>这个网上教程一堆 自己也有博客 就不多说了 反正知道他是react中最火的一个状态管理的方案就行</p>
-<h1 id="redux-saga"><a href="#redux-saga" class="headerlink" title="redux-saga"></a>redux-saga</h1><p>然后嘞 我们就看看啥是redux-saga,我们先想想redux是怎么写异步action的，哎，同步action是啥，dispatch一个对象，异步呢，就是dispatch一个函数嘛，然后在applyMiddleWare里面加上thunk，具体的实现原理大概就是tunk会帮你在函数action里面再调dispatch返回出原生的action对象，所以就可以在这个函数里面执行异步操作，因为最后返回的都是action对象，不影响reducer对action的处理，然后applyMiddleWare和thunk的源码我还没看，熬过这项目期再看，感觉看源码需要静下来花时间看才行。</p>
+<h1 id="redux-saga"><a href="#redux-saga" class="headerlink" title="redux-saga"></a>redux-saga</h1><p>然后嘞 我们就看看啥是redux-saga,我们先想想redux是怎么写异步action的，哎，同步action是啥，dispatch一个对象，异步呢，就是dispatch一个函数嘛，然后在applyMiddleWare里面加上thunk，具体的实现原理大概就是tunk会帮你在函数action里面再调dispatch返回出原生的action对象，所以就可以在这个函数里面执行异步操作，因为最后返回的都是action对象，不影响reducer对action的处理，然后applyMiddleWare的作用原理是store=&gt;next=&gt;action=&gt;{}这种形式把所以的middleware串联起来再在最后调dispatch，就是enhancer，create Store()的第三个参数，这里就不多说了，这篇博客的重点也不是这个。</p>
 <p>然后就有大佬觉得，哎呀thunk太麻烦啦，我不同的异步操作要分散在不同的action里面啊，我action形式也不统一一会儿object一会儿function的太丑了啊，你这轮子不行我要自己造。 这就是大佬的思考方式，别人的轮子不好用就自己造，我等凡人要么是硬着头皮用轮子要么是硬着头皮去找自己不喜欢的轮子。</p>
 <p>于是，redux-saga出来了，官方一点的介绍是<br><strong>redux-saga 是一个用于管理 Redux 应用异步操作的中间件（又称异步 action）。 redux-saga 通过创建 Sagas 将所有的异步操作逻辑收集在一个地方集中处理，可以用来代替 redux-thunk 中间件。</strong><br>总之咱们就知道写大项目时就他来写异步action就完事了。<br>好，有了saga之后，redux的项目逻辑就被分成了两部分</p>
 <ul>
@@ -1760,5 +1760,15 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
       <tags>
         <tag>react</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>muxi-workbench总结</title>
+    <url>/2021/10/18/muxi-workbench%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>小幸运项目总结</title>
+    <url>/2021/10/18/%E5%B0%8F%E5%B9%B8%E8%BF%90%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>
