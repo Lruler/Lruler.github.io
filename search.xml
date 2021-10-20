@@ -649,7 +649,7 @@
 
 <p>这个辅助函数的意思就是说，当一个<code>USER_REQUESTED</code> action 被发起时，使用 <code>takeLatest</code> 来启动一个新的 <code>fetchUser</code> 任务。 由于 <code>takeLatest</code> 取消了所有之前启动且未完成的任务，这样便可以保证：即使用户以极快的速度连续多次触发 <code>USER_REQUESTED</code> action，我们都只会以最后的一个结束。</p>
 <p>辅助函数介绍完了，我们来看看saga里面比较重要一个部分 Effect</p>
-<h3 id="Effect函数"><a href="#Effect函数" class="headerlink" title="Effect函数"></a>Effect函数</h3><p>saga里面有很多执行Effect的函数，而这些是saga实现作用的关键，看一下常用的吧</p>
+<h3 id="Effect函数"><a href="#Effect函数" class="headerlink" title="Effect函数"></a>Effect函数</h3><p>saga里面有很多执行Effect的函数，而这些是saga实现作用的关键，看一下常用的吧，为什么叫Effect呢，就是和纯函数对应吗，你异步操作肯定会有副作用产生，所以管你叫Effect没啥问题对吧</p>
 <ul>
 <li><strong>take(pattern)</strong></li>
 </ul>
