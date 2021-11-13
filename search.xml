@@ -1365,6 +1365,7 @@
 <li><a href="https://segmentfault.com/a/1190000018861018">React-transition-group 路由页面跳转动画库</a></li>
 </ul>
 <p>​        <a href="https://juejin.cn/post/6887471865720209415">优化方案</a></p>
+<p><a href="http://reactcommunity.org/react-transition-group/transition-group">官网</a></p>
 <ul>
 <li><a href="https://react-spring.io/">react-spring</a> 这个好像可以用来写树叶滑动的动画，但没实践</li>
 </ul>
