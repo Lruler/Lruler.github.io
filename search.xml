@@ -1878,20 +1878,20 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
 </ol>
 <p> 就是http请求中的multipart/form-data,它会将表单的数据处理为一条消息，以标签为单元，用分隔符分开。既可以上传键值对，也可以上传文件。当上传的字段是文件时，会有Content-Type来说明文件类型；content-disposition，用来说明字段的一些信息；</p>
 <p>由于有boundary隔离，所以multipart/form-data既可以上传文件，也可以上传键值对，它采用了键值对的方式，所以可以上传多个文件。</p>
-<p><img src="https://img-blog.csdn.net/20151118130933756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"></p>
-<p><img src="https://img-blog.csdn.net/20151118130954483?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"></p>
-<ol start="2">
+<p><img src="/2021/11/15/%E6%90%9E%E9%92%B1%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/fd1.png"></p>
+<p><img src="/2021/11/15/%E6%90%9E%E9%92%B1%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/fd2.png"></p>
+<ol>
 <li>X-www-form-urlencoded</li>
 </ol>
 <p>就是<strong>application/x-www-from-urlencoded</strong>,会将表单内的数据转换为键值对，比如,name=java&amp;age = 23</p>
-<p><img src="https://img-blog.csdn.net/20151118131219584?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"></p>
-<p><img src="https://img-blog.csdn.net/20151118131234865?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"></p>
-<ol start="3">
+<p><img src="/2021/11/15/%E6%90%9E%E9%92%B1%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/url1.png"></p>
+<p><img src="/2021/11/15/%E6%90%9E%E9%92%B1%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/url2.png"></p>
+<ol>
 <li>raw 这个就是我们比较熟悉的的一种格式了，可以上传任意格式的文本，text/json/xml/html等，然后我们大部分还是传json过去，因为json可以序列化大部分数据类型嘛</li>
 </ol>
-<p><img src="https://img-blog.csdn.net/20151118131504612?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"></p>
-<p><img src="https://img-blog.csdn.net/20151118131523976?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"></p>
-<ol start="4">
+<p><img src="/2021/11/15/%E6%90%9E%E9%92%B1%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/raw1.png"></p>
+<p><img src="/2021/11/15/%E6%90%9E%E9%92%B1%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/raw2.png"></p>
+<ol>
 <li><p>binary</p>
 <pre><code>   相当于Content-Type:application/octet-stream,从字面意思得知，只可以上传二进制数据，通常用来上传文件，由于没有键值，所以，一次只能上传一个文件。
 </code></pre>
