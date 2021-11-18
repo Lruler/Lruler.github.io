@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-11-18T02:12:51.893Z</updated>
+  <updated>2021-11-18T14:09:04.406Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>react-hooks</title>
+    <link href="http://example.com/2021/11/18/react-hooks/"/>
+    <id>http://example.com/2021/11/18/react-hooks/</id>
+    <published>2021-11-18T13:40:17.000Z</published>
+    <updated>2021-11-18T14:09:04.406Z</updated>
+    
+    <content type="html"><![CDATA[<p>对react-hooks系统的做一次总结吧，不然总是写着查写着查</p><span id="more"></span><p>对于react-hooks不多赘述，就理解为这些hooks让函数组件拥有了类组件的大部分功能并代替类组件使用就行</p><p>然后react中有七大hooks</p><ol><li>useState 函数组件中使用State</li><li>useEffect 函数组件中的副作用使用</li><li>useContext 全局数据共享</li><li>useReducer 简化版redux</li><li>userMemo / useCallback 缓存, 优化性能</li><li>useRef 引用实例，保存变量</li><li>自定义hook</li></ol><h1 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h1>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;对react-hooks系统的做一次总结吧，不然总是写着查写着查&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="笔记" scheme="http://example.com/categories/%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="react" scheme="http://example.com/tags/react/"/>
+    
+  </entry>
   
   <entry>
     <title>搞钱项目总结</title>
@@ -395,27 +416,6 @@
     
     
     <summary type="html">&lt;p&gt;Css in depth 第七章笔记&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="笔记" scheme="http://example.com/categories/%E7%AC%94%E8%AE%B0/"/>
-    
-    
-    <category term="css" scheme="http://example.com/tags/css/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Unit5-Flexbox</title>
-    <link href="http://example.com/2021/06/12/CssU5/"/>
-    <id>http://example.com/2021/06/12/CssU5/</id>
-    <published>2021-06-12T12:49:50.000Z</published>
-    <updated>2021-06-12T12:50:01.025Z</updated>
-    
-    <content type="html"><![CDATA[<p>Css in depth 第五章 flexbox 的学习笔记</p><span id="more"></span><h1 id="Flexbox-原则"><a href="#Flexbox-原则" class="headerlink" title="Flexbox 原则"></a>Flexbox 原则</h1><p>从display属性开始，当我们给一个元素添加display:flex后，该容器就会变成一个弹性容器，它的直接子元素就变成了弹性子元素，弹性子元素默认是在同一行按照从左到右的顺序并排排列。 弹性容器和块级容器一样自动填满可用的宽度，但弹性子元素不一定会填满容器的宽度弹性子元素高度相等，该高度由他们的内容决定。</p><p>然后弹性容器里面有两个坐标轴，主轴为水平x(默认，从左到右)和副轴y(从上到下)，子元素就会默认沿主轴排列，并成等高列形式。</p><h1 id="容器属性"><a href="#容器属性" class="headerlink" title="容器属性"></a>容器属性</h1><p>接下来就要看看flex布局的属性了，这部分是核心，了解他们才能熟练掌握flex布局，接下来先看看容器属性，也就是通过在弹性容器中设置属性来操纵弹性子元素</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">1. flex-direction: 设置主轴方向</span><br><span class="line">&#123;</span><br><span class="line">    row  //默认</span><br><span class="line">    row-reverse  //从右到左</span><br><span class="line">    column  //从上到下</span><br><span class="line">    column-reverse //从下到上</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">2. justify-content: 设置主轴上子元素排列方式</span><br><span class="line">&#123;</span><br><span class="line">    flex-start  //默认</span><br><span class="line">    flex-end  //从尾部开始</span><br><span class="line">    center  //居中对齐</span><br><span class="line">    space-around //平分剩余空间</span><br><span class="line">    space-between //先两边贴合 再平分剩余空间</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">3. flex-warp: 设置子元素是否换行</span><br><span class="line">&#123;</span><br><span class="line">    nowarp  //默认不换行</span><br><span class="line">    wrap  //换行</span><br><span class="line">    wrap-reverse  //换行，第一行往下</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">4. align-items: 设置侧轴子元素排列方式 (单行)</span><br><span class="line">&#123;</span><br><span class="line">    flex //侧轴默认方向</span><br><span class="line">    flex-end  //默认反向</span><br><span class="line">    center  //居中</span><br><span class="line">    stretch  //拉伸(默认)</span><br><span class="line">    baseline  //取内容第一行文字基线对齐</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">5. align-content: 设置侧轴子元素排列方式(多行)</span><br><span class="line">&#123;</span><br><span class="line">    其他属性和单行相同，多了space-around 和 space-bettwen</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">6. flex-flow 同时设置 flex-direction 和 flex-warp </span><br></pre></td></tr></table></figure><h1 id="item-属性"><a href="#item-属性" class="headerlink" title="item 属性"></a>item 属性</h1><p>接下来再看看子相属性</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">order 定义项目排列顺序 数值越小 排列越靠前</span><br><span class="line">flex-basis 定义了该item(弹性子元素)尺寸的基准值，默认是auto，即项目由本身内容决定的尺寸，该值可以是任意width单位值，</span><br><span class="line">flex-grow  每个item的增长比例，即用于平分剩余空间时所占的比例</span><br><span class="line">flex-shrink  每个item的缩小比例 即内容溢出后所占的缩小比例</span><br><span class="line">flex： flex-gorw，flex-shrink，flex-basis 的合写</span><br><span class="line">align-self 用于设置单个item的对齐方式，可以覆盖align-items 值与其相等</span><br></pre></td></tr></table></figure><p>Okey Flex到此为止咯</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Css in depth 第五章 flexbox 的学习笔记&lt;/p&gt;</summary>
     
     
     

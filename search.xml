@@ -1943,4 +1943,29 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
         <tag>project</tag>
       </tags>
   </entry>
+  <entry>
+    <title>react-hooks</title>
+    <url>/2021/11/18/react-hooks/</url>
+    <content><![CDATA[<p>对react-hooks系统的做一次总结吧，不然总是写着查写着查</p>
+<span id="more"></span>
+
+<p>对于react-hooks不多赘述，就理解为这些hooks让函数组件拥有了类组件的大部分功能并代替类组件使用就行</p>
+<p>然后react中有七大hooks</p>
+<ol>
+<li>useState 函数组件中使用State</li>
+<li>useEffect 函数组件中的副作用使用</li>
+<li>useContext 全局数据共享</li>
+<li>useReducer 简化版redux</li>
+<li>userMemo / useCallback 缓存, 优化性能</li>
+<li>useRef 引用实例，保存变量</li>
+<li>自定义hook</li>
+</ol>
+<h1 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h1>]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>react</tag>
+      </tags>
+  </entry>
 </search>
