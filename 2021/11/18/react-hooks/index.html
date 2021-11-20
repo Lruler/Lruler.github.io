@@ -28,7 +28,7 @@
 <meta property="og:description" content="对react-hooks系统的做一次总结吧，不然总是写着查写着查">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-11-18T13:40:17.000Z">
-<meta property="article:modified_time" content="2021-11-20T12:39:00.286Z">
+<meta property="article:modified_time" content="2021-11-20T12:42:12.822Z">
 <meta property="article:author" content="Lruler">
 <meta property="article:tag" content="react">
 <meta name="twitter:card" content="summary">
@@ -255,7 +255,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-11-20 20:39:00" itemprop="dateModified" datetime="2021-11-20T20:39:00+08:00">2021-11-20</time>
+        <time title="修改时间：2021-11-20 20:42:12" itemprop="dateModified" datetime="2021-11-20T20:42:12+08:00">2021-11-20</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -314,7 +314,7 @@
 <p>为什么是合并更新很好理解嘛，因为控制某个组件的状态都得放在this.state这一个对象里面，然后我们想想看，假设这个页面需要的状态很多，也就是要有一堆key value，但我们每次更改state应该只会更改其中的一项，那我们每次写都要</p>
 <p><code>setState(&#123;...this.state, a: xx&#125;)</code></p>
 <p>万一哪次我们忘了，会咋样，就看上面那块，整个state就变成了{d: 4},那用到a,b的地方渲染的就是undefined，Oh，然后GG，所以为了避免这种情况发生react就在底层做了这么一层浅合并的处理，当然，这也不完全是好的。我们在看下面这一串代码</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.state = &#123;<span class="attr">a</span>:<span class="number">1</span>, <span class="attr">b</span>:<span class="string">&#x27;muxiMfe&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">onClick</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  setState(&#123; <span class="attr">a</span>: <span class="number">2</span>&#125;) </span><br><span class="line">  setState(&#123; <span class="attr">b</span>:<span class="string">&quot;muxiMbe&quot;</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.state = &#123;<span class="attr">a</span>:<span class="number">1</span>, <span class="attr">b</span>:<span class="string">&#x27;muxiMfe&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">onClick</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">  setState(&#123;...this.state, <span class="attr">a</span>: <span class="number">2</span>&#125;) </span><br><span class="line">  setState(&#123;...this.state, <span class="attr">b</span>:<span class="string">&quot;muxiMbe&quot;</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>想想看，最后我们console.log(this.state)，输出是什么？是{a: 2, b:”muxiMbe”}吗？ 这个问题放在后面讲了异步同步的问题再来解答，大家伙好好想想。</p>
 <p>而useState()是替换更新，这个待会儿再讲。所以，在明确setState()是合并更新后，我们再来看第一个问题</p>
