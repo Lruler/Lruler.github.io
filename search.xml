@@ -2111,11 +2111,12 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
 <p>​            1）增删元素（包括插入后续请求到的图片资源）</p>
 <p>​            2）改变盒模型</p>
 <ol start="4">
-<li><p>对Render树布局，就是你网页里每个区域的宽高啊，一个图片该放在哪儿啊，做这些计算布局（Layout）渲染</p>
-</li>
-<li><p>把最后形成的页面绘制到屏幕上，至此渲染过程完成</p>
-</li>
+<li>对Render树布局，就是你网页里每个区域的宽高啊，一个图片该放在哪儿啊，做这些计算布局（Layout）渲染</li>
+<li>把最后形成的页面绘制到屏幕上，至此渲染过程完成</li>
 </ol>
+<ul>
+<li>如果页面的DOM发生变化就会引起浏览器的重绘和回流，重绘就是重新执行第五步，回流则要重新执行第四步，DOM的外观发生变化，比如颜色啥的会引起重绘，而如果DOM的结构发生变化则会引起浏览器的回流，比如尺寸布局节点none等等等等，这也是直接操作DOM性能低的原因，因为react的VDOM会在每次更改后合并然后只更改diff，所以每次页面变更都只会进行一次重绘/回流</li>
+</ul>
 <p>useEffect()在哪儿执行？ 在第五步之后，浏览器绘制屏幕后才会执行。而生命周期函数呢？ 在浏览器绘制之前，也就是第四步和第五步之间，所以真的想要生命周期的功能，还得用react提供的另一个API——useLayoutEffect()，注意这个Layout，不就刚好对应第四步的布局render树那一步？ </p>
 <p>所以，事实上，useLayout()才是react提供用来代替生命周期的hook，看官方文档怎么说</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">其函数签名与 useEffect 相同，但它会在所有的 DOM 变更之后同步调用 effect。可以使用它来读取 DOM 布局并同步触发重渲染。在浏览器执行绘制之前，useLayoutEffect 内部的更新计划将被同步刷新。</span><br><span class="line"></span><br><span class="line">尽可能使用标准的 useEffect 以避免阻塞视觉更新</span><br></pre></td></tr></table></figure>
@@ -2212,7 +2213,7 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
 
 <p>想到没——props.children! 重新渲染无非就是重新render？顶层呢？是react调用了React.createElement()方法重新构建了一个DOM树，而使用<strong>children</strong>直接渲染子组件可以避免在状态组件中React使用<strong>React.createElement(Son)</strong> 渲染子组件，所以就不会反复渲染啦。其他关于解决重复渲染的优化可以看这篇文装。 <a href="https://juejin.cn/post/7023172291622076447">参考链接</a></p>
 <p>接下来就是useCallback()啦</p>
-<h2 id="useCallback"><a href="#useCallback" class="headerlink" title="useCallback()"></a>useCallback()</h2><p>``useCallback(fn, deps)<code>相当于</code>useMemo(() =&gt; fn, deps)<code>。</code></p>
+<h2 id="useCallback"><a href="#useCallback" class="headerlink" title="useCallback()"></a>useCallback()</h2><p>``useCallback(fn, deps)<code>相当于</code>useMemo(() =&gt; fn, deps)`</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">把内联回调函数及依赖项数组作为参数传入 useCallback，它将返回该回调函数的 memoized 版本，该回调函数仅在某个依赖项改变时才会更新。当你把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时，它将非常有用。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>啥意思呢，就是假设父组件给子组件传递了一个函数嘛，好然后我父组件被一些乱七八糟的东西搞得重新渲染了，得，我子组件又要重新渲染——哪怕用了memo(注意不是useMemo, memo是另一个API,用于比较oldprops和newprops是否相同来觉得是否重新渲染子组件的)也会被重新渲染，为啥？ 因为函数在Js里面是一级对象嘛，你父组件每次被重新执行，那我这个函数也会重新生成，那在堆里面的地址就不一样咯，那memo自然不起作用了，这时候用useCallback()优化即可，就不放代码了，因为我觉得直接useMemo()好像更方便一点，然后useCallback还有用作给useEffect()添加函数依赖。</p>
