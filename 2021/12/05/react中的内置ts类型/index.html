@@ -29,8 +29,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/12/05/react%E4%B8%AD%E7%9A%84%E5%86%85%E7%BD%AEts%E7%B1%BB%E5%9E%8B/lruler/Desktop/Github/lruler.github.io/source/_posts/react中的内置ts类型/node:element.png.png">
 <meta property="og:image" content="http://example.com/2021/12/05/react%E4%B8%AD%E7%9A%84%E5%86%85%E7%BD%AEts%E7%B1%BB%E5%9E%8B/lruler/Desktop/Github/lruler.github.io/source/_posts/react中的内置ts类型/Snipaste_2021-12-06_10-50-36.png">
+<meta property="og:image" content="http://example.com/2021/12/05/react%E4%B8%AD%E7%9A%84%E5%86%85%E7%BD%AEts%E7%B1%BB%E5%9E%8B/lruler/Desktop/Github/lruler.github.io/source/_posts/react中的内置ts类型/Snipaste_2021-12-06_19-35-33.png">
 <meta property="article:published_time" content="2021-12-05T13:52:58.000Z">
-<meta property="article:modified_time" content="2021-12-06T08:34:40.636Z">
+<meta property="article:modified_time" content="2021-12-06T11:47:32.664Z">
 <meta property="article:author" content="Lruler">
 <meta property="article:tag" content="react">
 <meta name="twitter:card" content="summary">
@@ -150,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#React-ReactNode%E5%92%8CReact-Element"><span class="nav-number">1.</span> <span class="nav-text">React.ReactNode和React.Element</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E7%B1%BB%E5%9E%8B%E5%8F%8ADOM%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">事件类型及DOM类型</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#React-ReactNode%E5%92%8CReact-Element"><span class="nav-number">1.</span> <span class="nav-text">React.ReactNode和React.Element</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">事件处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTML%E6%A0%87%E7%AD%BE%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">HTML标签类型</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -258,7 +259,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-06 16:34:40" itemprop="dateModified" datetime="2021-12-06T16:34:40+08:00">2021-12-06</time>
+        <time title="修改时间：2021-12-06 19:47:32" itemprop="dateModified" datetime="2021-12-06T19:47:32+08:00">2021-12-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -335,7 +336,45 @@
 
 <p>返回的类型是明确的ReactElement！为什么？ 看之前createElement源码部分，有对自定义组件的说明。(当然其实也可以理解为返回ReactNode,因为Element是Node的子集，但还是根据源码准确点好, 因为可以注意类组件的render方法和函数声明方式写的组件，他们渲染的类型都是JSX.Element，也就是说 JSX.Element == ReactElement)</p>
 <p>到这，虽然写的有点啰嗦，但我们要知其然并知其所以然嘛。</p>
-<h1 id="事件类型及DOM类型"><a href="#事件类型及DOM类型" class="headerlink" title="事件类型及DOM类型"></a>事件类型及DOM类型</h1><p>测试</p>
+<h1 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h1><p>事件处理其实主要就是event事件对象类型的问题</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> onChange = (e) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(e.target.value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>受控表单一般都会这么写是吧，但如果你不给e限定类型他就会报错，说e这个类型没有target嘛，这个好解决，cmd点进去看这些合成事件就能看到，大部分啥ChangeEvent啊MouseEvent啊，还有一些泛型啥的，这个不难，简单的看一下实现，有兴趣就自己去研究下源码。</p>
+<ul>
+<li><p><strong>剪切板事件对象</strong>：ClipboardEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>拖拽事件对象</strong>：DragEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>焦点事件对象</strong>：FocusEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>表单事件对象</strong>：FormEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>Change事件对象</strong>：ChangeEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>键盘事件对象</strong>：KeyboardEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>鼠标事件对象</strong>：MouseEvent&lt;T = Element, E = NativeMouseEvent&gt;</p>
+</li>
+<li><p><strong>触摸事件对象</strong>：TouchEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>滚轮事件对象</strong>：WheelEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>动画事件对象</strong>：AnimationEvent&lt;T = Element&gt;</p>
+</li>
+<li><p><strong>过渡事件对象</strong>：TransitionEvent&lt;T = Element&gt;</p>
+</li>
+</ul>
+<p>就比如说我之前写受控表单的时候就是这么写的</p>
+<img src="/2021/12/05/react%E4%B8%AD%E7%9A%84%E5%86%85%E7%BD%AEts%E7%B1%BB%E5%9E%8B/lruler/Desktop/Github/lruler.github.io/source/_posts/react中的内置ts类型/Snipaste_2021-12-06_19-35-33.png" alt="Snipaste_2021-12-06_19-35-33" style="zoom:50%;">
+
+
+
+<p>处理表单嘛，所以泛型给的就是HTMLInputElement，这个是HTML标签类型，放在后面讲。</p>
+<p>这里注意到，onChange这个合成事件的类型是啥？ 老长一串，哎，这也直接看简单的声明吧</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> EventHandler&lt;E <span class="keyword">extends</span> SyntheticEvent&lt;<span class="built_in">any</span>&gt;&gt; = &#123; bivarianceHack(event: E): <span class="built_in">void</span> &#125;[<span class="string">&quot;bivarianceHack&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ReactEventHandler&lt;T = Element&gt; = EventHandler&lt;SyntheticEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 剪切板事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> ClipboardEventHandler&lt;T = Element&gt; = EventHandler&lt;ClipboardEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 复合事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> CompositionEventHandler&lt;T = Element&gt; = EventHandler&lt;CompositionEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 拖拽事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> DragEventHandler&lt;T = Element&gt; = EventHandler&lt;DragEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 焦点事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> FocusEventHandler&lt;T = Element&gt; = EventHandler&lt;FocusEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 表单事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> FormEventHandler&lt;T = Element&gt; = EventHandler&lt;FormEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// Change事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> ChangeEventHandler&lt;T = Element&gt; = EventHandler&lt;ChangeEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 键盘事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> KeyboardEventHandler&lt;T = Element&gt; = EventHandler&lt;KeyboardEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 鼠标事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> MouseEventHandler&lt;T = Element&gt; = EventHandler&lt;MouseEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 触屏事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> TouchEventHandler&lt;T = Element&gt; = EventHandler&lt;TouchEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 指针事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> PointerEventHandler&lt;T = Element&gt; = EventHandler&lt;PointerEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 界面事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> UIEventHandler&lt;T = Element&gt; = EventHandler&lt;UIEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 滚轮事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> WheelEventHandler&lt;T = Element&gt; = EventHandler&lt;WheelEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 动画事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> AnimationEventHandler&lt;T = Element&gt; = EventHandler&lt;AnimationEvent&lt;T&gt;&gt;;</span><br><span class="line"><span class="comment">// 过渡事件处理函数</span></span><br><span class="line"><span class="keyword">type</span> TransitionEventHandler&lt;T = Element&gt; = EventHandler&lt;TransitionEvent&lt;T&gt;&gt;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>编译器一般会有提示，vscode是有的，就比如我们写onChange类型的时候写个Change,后面的EventHandler应该会自动弹出来，实在不行也就直接cmd点进去看源码算了。</p>
+<h1 id="HTML标签类型"><a href="#HTML标签类型" class="headerlink" title="HTML标签类型"></a>HTML标签类型</h1><p>这个其实也好解释，我们在组件里面写的<div>啊 <input>啊啥的</div></p>
 
     </div>
 
