@@ -2286,7 +2286,7 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
 <p>好，明白了ReactElement，那什么是ReactNode？</p>
 <p>答案很简单——所有可以被React渲染到浏览器上的东西，也可以理解为，VDOM上的每个节点，都是是ReactNode。</p>
 <p>好了 那么接下来看下面这部分</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const Parent = () =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">  	&lt;&gt;</span><br><span class="line">    	&lt;div&gt;</span><br><span class="line">      	&lt;Child /&gt;</span><br><span class="line">      &lt;div/&gt;</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const Child = () =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">  	&lt;&gt;</span><br><span class="line">    	&lt;div&gt;</span><br><span class="line">      	我是孩子</span><br><span class="line">      &lt;div/&gt;</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line">      </span><br><span class="line">ReactDOM.render(</span><br><span class="line">    &lt;Parent /&gt;,</span><br><span class="line">    document.getElementById(&#x27;root&#x27;)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">const Parent = () =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">  	&lt;&gt;</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;Child /&gt;</span><br><span class="line">      &lt;div/&gt;</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const Child = () =&gt; &#123;</span><br><span class="line">  return (</span><br><span class="line">  	&lt;&gt;</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">      	我是孩子</span><br><span class="line">      &lt;div/&gt;</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line">      </span><br><span class="line">ReactDOM.render(</span><br><span class="line">    &lt;Parent /&gt;,</span><br><span class="line">    document.getElementById(&#x27;root&#x27;)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 
 <p>自己思考一下？那些是ReactNode,那些是ReactElement呢 ？</p>
 <p>注意一点，React.FC的返回值是ReactElement！不是ReactNode！这里很多博客说的不完全正确，我们可以看看源码</p>
@@ -2294,7 +2294,8 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
 
 <p>返回的类型是明确的ReactElement！为什么？ 看之前createElement源码部分，有对自定义组件的说明。(当然其实也可以理解为返回ReactNode,因为Element是Node的子集，但还是根据源码准确点好, 因为可以注意类组件的render方法和函数声明方式写的组件，他们渲染的类型都是JSX.Element，也就是说 JSX.Element == ReactElement)</p>
 <p>到这，虽然写的有点啰嗦，但我们要知其然并知其所以然嘛。</p>
-<h1 id><a href="#" class="headerlink" title></a></h1>]]></content>
+<h1 id="事件类型及DOM类型"><a href="#事件类型及DOM类型" class="headerlink" title="事件类型及DOM类型"></a>事件类型及DOM类型</h1><p>测试</p>
+]]></content>
       <categories>
         <category>笔记</category>
       </categories>
