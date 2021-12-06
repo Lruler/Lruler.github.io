@@ -2344,6 +2344,9 @@ C组件: 读取A组件传入的数据显示 &#123;this.props.data&#125;
 <p>然后每个标签都还有自己的属性类型，不过用的不多，一般在自己封装原生组件的库的时候会用到(比如antd的Radio组件)，简单了解下</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><span class="line">HTML属性类型：HTMLAttributes</span><br><span class="line">按钮属性类型：ButtonHTMLAttributes</span><br><span class="line">表单属性类型：FormHTMLAttributes</span><br><span class="line">图片属性类型：ImgHTMLAttributes</span><br><span class="line">输入框属性类型：InputHTMLAttributes</span><br><span class="line">链接属性类型：LinkHTMLAttributes</span><br><span class="line">meta属性类型：MetaHTMLAttributes</span><br><span class="line">选择框属性类型：SelectHTMLAttributes</span><br><span class="line">表格属性类型：TableHTMLAttributes</span><br><span class="line">输入区属性类型：TextareaHTMLAttributes</span><br><span class="line">视频属性类型：VideoHTMLAttributes</span><br><span class="line">SVG属性类型：SVGAttributes</span><br><span class="line">WebView属性类型：WebViewHTMLAttributes</span><br></pre></td></tr></table></figure>
 
+
+
+<p>最后还有一些其他的，比如ref的类型啊或者useReducer，不过react提供的hooks一般会自动帮你进行类型推断，实在不行还是老办法，点进去看一眼类型源码就知道了。</p>
 ]]></content>
       <categories>
         <category>笔记</category>
